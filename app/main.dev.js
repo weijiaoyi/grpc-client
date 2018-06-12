@@ -10,7 +10,7 @@
  *
  * @flow
  */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import MenuBuilder from './menu';
 
 let mainWindow = null;
@@ -85,3 +85,11 @@ app.on('ready', async () => {
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 });
+
+ipcMain.on('open-file-dialog', function(event){
+  dialog.showOpenDialog({
+    properties: ['openFile']
+  }, function (files) {
+    if (files) event.sender.send('selected-directory', files)
+  })
+})

@@ -13,6 +13,17 @@
     "electron-rebuild": "node -r babel-register ../internals/scripts/ElectronRebuild.js",
     "postinstall": "npm run electron-rebuild"
   },
+  "build": {
+    "fileAssociations": [
+      {
+        "ext": "proto"
+      }
+    ]
+  },
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "grpc": "^1.12.3",
+    "net": "^1.0.2"
+  }
 }

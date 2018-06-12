@@ -1,11 +1,11 @@
 // @flow
 import { combineReducers } from 'redux';
 import { routerReducer as router } from 'react-router-redux';
-import counter from './counter';
+import grpcReducer from './grpcReducer';
 
 const rootReducer = combineReducers({
-  counter,
-  router
+  router,
+  grpcReducer
 });
 
 export default rootReducer;

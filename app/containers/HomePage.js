@@ -1,13 +1,18 @@
 // @flow
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import {bindActionCreators} from 'redux' 
 import Home from '../components/Home';
+import * as GrpcActions from '../actions/grpc';
 
-type Props = {};
-
-export default class HomePage extends Component<Props> {
-  props: Props;
-
-  render() {
-    return <Home />;
-  }
+function mapStateToProps(state) {
+  return {
+    protos: state.protos
+  };
 }
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(GrpcActions, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
