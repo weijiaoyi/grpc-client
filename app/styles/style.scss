@@ -1,0 +1,28 @@
+
+.container {
+    display: block;
+    &.container--main{
+        padding-left: 250px;
+    }
+}
+
+
+
+.items {
+    & .item {
+        display: block;
+        width: 200px;
+        height: 20px;
+        border: 1px solid grey;
+
+        &:hover{
+            cursor: pointer;
+            background: grey;
+        }
+    }
+}
+
+.sidebar{
+    width: 250px;
+    height: 100%;
+}

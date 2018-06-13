@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
+import { NavLink } from 'react-router';
 import { ConnectedRouter } from 'react-router-redux';
 import Routes from '../routes';
 
