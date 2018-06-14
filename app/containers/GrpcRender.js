@@ -106,16 +106,16 @@ class GrpcRender extends GrpcBase {
             <Row className={style['grpc-grid-row']}>
               <Col sm={6} className={style['grpc-grid-col']}>
                 {this.props.protos && this.props.protos.map(proto => {
-                  return <div key={proto.name} className={style['grpc-grid-col-item']}>{proto.name}</div>
+                  return <div key={proto.name} className={classNames(style['grpc-grid-col-item'], style['not-selectable'])}>{proto.name}</div>
                 })}
               </Col>
               <Col sm={6} className={style['grpc-grid-col']}>
-                <h1>proto here</h1>
+                <h1>Services here</h1>
               </Col>
             </Row>
             <Row className={style['grpc-grid-row']}>
               <Col sm={12}>
-                <h1>Field here</h1>
+                <h1>Result</h1>
               </Col>
             </Row>
           </Grid>
