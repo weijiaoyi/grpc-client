@@ -1,7 +1,8 @@
-import { ADD_PROTO, GET_STORED_PROTOS } from '../actions/grpc';
+import { ADD_PROTO, GET_STORED_PROTOS, ADD_SERVICE } from '../actions/grpc';
 
 const defaultState = {
-  protos: []
+  protos: [],
+  services: [],
 }
 
 export default (state = defaultState, action) => {
@@ -14,11 +15,18 @@ export default (state = defaultState, action) => {
 
       return {
           ...state,
-          protos: [ ...state.protos, action.payload ]
+          protos: [...state.protos, action.payload]
       }
 
       case GET_STORED_PROTOS:
       break;
+
+      case ADD_SERVICE:
+
+      return{
+        ...state,
+        services: [...state.services, action.payload]
+      }
 
       default:
           break; 

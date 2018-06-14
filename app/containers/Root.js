@@ -7,7 +7,8 @@ import Routes from '../routes';
 
 type Props = {
   store: {},
-  history: {}
+  history: {},
+  location: {}
 };
 
 export default class Root extends Component<Props> {
@@ -15,7 +16,7 @@ export default class Root extends Component<Props> {
     return (
       <Provider store={this.props.store}>
         <ConnectedRouter history={this.props.history}>
-          <Routes />
+          <Routes/>
         </ConnectedRouter>
       </Provider>
     );

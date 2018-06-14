@@ -80,6 +80,11 @@ export default merge.smart(baseConfig, {
       },
       {
         test: /\.global\.css$/,
+        loader: 'style-loader!css-loader',
+        include: /flexboxgrid/
+      },
+      {
+        test: /\.global\.css$/,
         use: [
           {
             loader: 'style-loader'

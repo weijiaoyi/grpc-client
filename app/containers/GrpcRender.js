@@ -3,17 +3,21 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { GrpcBase } from './GrpcBase';
 import { Link } from 'react-router-dom';
-import style from '../styles/style.scss';
 import Form from "react-jsonschema-form";
 import protobuf from "protobufjs";
 import { ipcRenderer as ipc } from 'electron';
 import grpc from 'grpc';
 import { bindActionCreators } from 'redux';
 import * as GrpcActions from '../actions/grpc';
+import { Grid, Row, Col } from 'react-flexbox-grid';
+
+import style from '../styles/style.scss';
+import classNames from 'classnames'
 
 function mapStateToProps(state) {
   return {
-    protos: state.grpcReducer.protos
+    protos: state.grpcReducer.protos,
+    services: state.grpcReducer.services
   };
 }
 
@@ -37,21 +41,24 @@ class GrpcRender extends GrpcBase {
       if(this.findService(parsed).length > 0){
         this.props.AddProto({
           name: path[0].replace(/^.*[\\\/]/, ''),
-          path: path[0]
+          path: path[0],
+          onClick: () => {
+            this.onProtoFileClicked(path[0]);
+          }
         });
       }
       //todo: print message to user - 'not found any service'
     }.bind(this))
   }
 
-  onProtoFileClicked = () => {
+  onProtoFileClicked = (path) => {
     const args = {
       proto: path,
       address: '127.0.0.1:5000',
       creds: grpc.credentials.createInsecure()
     }
 
-    let parsed = grpc.load(path[0]);
+    let parsed = grpc.load(path);
 
     if(this.foundServiceClient(parsed)){
       parsed = { 'unknown': parsed };
@@ -87,21 +94,31 @@ class GrpcRender extends GrpcBase {
         done: {type: "boolean", title: "Done?", default: false}
       }
     };
-
-    console.log(this.props.protos);
     
     return (
       <div>
-        <div className={style.container} data-tid="container">
-        <h1>GRPC Client</h1>
+        <div data-tid="container">
           <button className={"select-directory"} style={{ width: 200, height: 50}} onClick={this.onOpenFileClick}>
-            Open file...
+            Import file...
           </button>
-          <ul className={style.items}>
-          {this.props.protos && this.props.protos.map(proto => {
-            return <li key={proto.name} className={style.item}>{proto.name}</li>
-          })}
-          </ul>
+          <hr/>
+          <Grid fluid className={style['grpc-grid']}>
+            <Row className={style['grpc-grid-row']}>
+              <Col sm={6} className={style['grpc-grid-col']}>
+                {this.props.protos && this.props.protos.map(proto => {
+                  return <div key={proto.name} className={style['grpc-grid-col-item']}>{proto.name}</div>
+                })}
+              </Col>
+              <Col sm={6} className={style['grpc-grid-col']}>
+                <h1>proto here</h1>
+              </Col>
+            </Row>
+            <Row className={style['grpc-grid-row']}>
+              <Col sm={12}>
+                <h1>Field here</h1>
+              </Col>
+            </Row>
+          </Grid>
         </div>
       </div>
     );

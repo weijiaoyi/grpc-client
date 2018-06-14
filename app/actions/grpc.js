@@ -1,10 +1,12 @@
 
 export const ADD_PROTO = 'ADD_PROTO';
 export const GET_STORED_PROTOS = 'GET_STORED_PROTOS';
+export const ADD_SERVICE = 'ADD_SERVICE';
 
 export interface IProtoFile{
   name: string,
   path: string,
+  onClick: () => {}
 }
 
 export function AddProto(proto: IProtoFile) {

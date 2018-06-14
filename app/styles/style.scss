@@ -1,19 +1,34 @@
 
+$xxs: 0.4rem;
+$xs: 0.8rem;
+$s: 1.0rem;
+$sm: 1.2rem;
+$m: 1.6rem;
+$ml: 2.0rem;
+$l: 2.6rem;
+$xl: 3.2rem;
+$xxl: 3.8rem;
+
 .container {
     display: block;
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+
     &.container--main{
-        padding-left: 250px;
+        padding: $sm;
+        padding-left: 20rem + $sm;
     }
 }
-
 
 
 .items {
     & .item {
         display: block;
-        width: 200px;
+        width: 100%;
         height: 20px;
-        border: 1px solid grey;
+        border-bottom: 1px solid grey;
+        padding: $sm;
 
         &:hover{
             cursor: pointer;
@@ -22,7 +37,63 @@
     }
 }
 
+.grpc-grid{
+    min-height: 50vh;
+    border: 1px solid grey;
+    border-radius: 6px;
+    padding: 0;
+}
+.grpc-grid-row{
+    position: relative;
+    margin: 0;
+    border-bottom: 1px solid grey;
+}
+.grpc-grid-row:last-child{
+    border: 0;
+    min-height: 250px;
+}
+.grpc-grid-col:last-child{
+    border-right: none;
+    min-height: 250px;
+}
+.grpc-grid-col{
+    padding: 0;
+    border-right: 1px solid black;
+}
+.grpc-grid-col-item{
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid grey;
+    padding: $xs;
+    word-wrap: break-word;
+
+    &:hover{
+        cursor: pointer;
+        background: grey;
+    }
+}
+
 .sidebar{
-    width: 250px;
+    position: absolute;
+    overflow-y: auto;
+    width: 200px;
     height: 100%;
+    background-image: linear-gradient(45deg, rgba(0, 216, 255, 0.5) 10%, rgba(0, 1, 127, 0.7));
+
+    & .nav-link{
+        width: 100%;
+        display: block;
+        box-sizing: border-box;
+        padding: $xs;
+        color: white; //todo: use invert
+
+        &.active{
+            background-blend-mode: darken;
+            background-color: darkblue;
+        }
+    }
+
+    
 }
