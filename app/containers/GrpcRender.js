@@ -3,13 +3,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { GrpcBase } from './GrpcBase';
 import { Link } from 'react-router-dom';
-import Form from "react-jsonschema-form";
-import protobuf from "protobufjs";
 import { ipcRenderer as ipc } from 'electron';
 import grpc from 'grpc';
 import { bindActionCreators } from 'redux';
 import * as GrpcActions from '../actions/grpc';
 import { Grid, Row, Col } from 'react-flexbox-grid';
+import GrpcForm from '../components/GrpcForm';
 
 import style from '../styles/style.scss';
 import classNames from 'classnames'
@@ -17,7 +16,9 @@ import classNames from 'classnames'
 function mapStateToProps(state) {
   return {
     protos: state.grpcReducer.protos,
-    services: state.grpcReducer.services
+    services: state.grpcReducer.services,
+    fields: state.grpcReducer.fields,
+    responseMessage: state.grpcReducer.responseMessage
   };
 }
 
@@ -33,7 +34,6 @@ class GrpcRender extends GrpcBase {
   }
 
   registerIpcEvents = () => {
-    const selectDirBtn = document.getElementById('select-directory')
     ipc.on('selected-directory', function(event, path) {
       let parsed = grpc.load(path[0]);
 
@@ -42,28 +42,28 @@ class GrpcRender extends GrpcBase {
         this.props.AddProto({
           name: path[0].replace(/^.*[\\\/]/, ''),
           path: path[0],
-          onClick: () => {
-            this.onProtoFileClicked(path[0]);
-          }
+          isSelected: false
         });
       }
       //todo: print message to user - 'not found any service'
     }.bind(this))
   }
 
-  onProtoFileClicked = (path) => {
-    const args = {
-      proto: path,
-      address: '127.0.0.1:5000',
-      creds: grpc.credentials.createInsecure()
-    }
+  onProtoFileClicked = (proto) => {
+    
+    if(proto.isSelected) return;
+    
+    this.props.ClearServices();
+    this.props.ClearFields();
 
-    let parsed = grpc.load(path);
+    let parsed = grpc.load(proto.path);
+
+    console.log(parsed);
 
     if(this.foundServiceClient(parsed)){
       parsed = { 'unknown': parsed };
     }
-    let services = [];
+    let protobufs = [];
 
     this.findService(parsed).forEach(def => {
       let desc = {}
@@ -71,14 +71,80 @@ class GrpcRender extends GrpcBase {
       desc.name = def.serviceName;
       desc.fqn = `${desc.package}.${desc.name}`;
       desc.def = def.def;
-      services.push(desc);
+      protobufs.push(desc);
     });
 
-    let client = new services[0].def("localhost:5000", grpc.credentials.createInsecure());
-    client.RunGameBot({gameBotId: 4}, (err, resp) => {
-      console.log('Response: ', resp);
-      console.log('Error: ', err);
+    console.log(protobufs[0]);
+    
+    if(protobufs[0]){
+      protobufs[0].def && Object.keys(protobufs[0].def.service).map((key) => {
+        this.props.AddService({
+          name: protobufs[0].def.service[key].originalName,
+          path: protobufs[0].def.service[key].path,
+          requestType: protobufs[0].def.service[key].requestType,
+          responseType: protobufs[0].def.service[key].responseType,
+          serviceClient: protobufs[0].def,
+          isSelected: false
+        });
+      });
+    }
+
+    this.props.SelectProto(proto);
+  }
+
+  syntaxHighlight = (json) => {
+    if (typeof json != 'string') {
+      json = JSON.stringify(json, undefined, 2);
+    }
+    return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  onGrpcFormSubmit = ({formData}) => {
+
+    this.props.ClearResponseMessage();
+
+    let endpointAddress = document.getElementById('endpoint').value;
+    let clientDef = this.props.services.filter((service) => service.isSelected)[0];
+    let client = new clientDef.serviceClient(endpointAddress, grpc.credentials.createInsecure());
+
+    // console.log(clientDef);
+    // console.log(client[clientDef.name]);
+
+    let metadata = new grpc.Metadata();
+    metadata.add('btt', '1');
+
+    // client[clientDef.name](7, 
+    //   (value) => Buffer.from(JSON.stringify(value), 'utf8'),
+    //   (data) => JSON.parse(data),
+    //   formData,
+    //   metadata,
+    //   {}, (err, resp) => {
+    //     this.props.PrintMessage(this.syntaxHighlight(resp || err));
+    //   }
+    // );
+
+    // client.makeUnaryRequest(clientDef.path, 
+    //   (value) => Buffer.from(JSON.stringify(value), 'utf8'),
+    //   (data) => JSON.parse(data),
+    //   formData,
+    //   metadata,
+    //   {}, (err, resp) => {
+    //     this.props.PrintMessage(this.syntaxHighlight(resp || err));
+    //     // document.getElementById('responseTextArea').innerHTML = this.syntaxHighlight(resp || err);
+    //     // console.log('Response: ', resp);
+    //     // console.log('Error: ', err);
+    //   }
+    // );
+
+    client[clientDef.name](formData, metadata: metadata, (err, resp) => {
+      this.props.PrintMessage(this.syntaxHighlight(resp || err));
     });
+  }
+
+  onServiceClicked = (service) => {
+    if(service.isSelected) return;
+    this.props.ClearFields();
+    this.props.SelectService(service);
   }
 
   onOpenFileClick = (event) => {
@@ -86,36 +152,58 @@ class GrpcRender extends GrpcBase {
   }
   
   render() {
-
-    const schema = {
-      type: "object",
-      properties: {
-        title: {type: "string", title: "Title", default: "A new task"},
-        done: {type: "boolean", title: "Done?", default: false}
-      }
-    };
-    
     return (
       <div>
         <div data-tid="container">
-          <button className={"select-directory"} style={{ width: 200, height: 50}} onClick={this.onOpenFileClick}>
+          <button className={classNames("select-directory", style.button, style.long)} onClick={this.onOpenFileClick}>
             Import file...
           </button>
+          <div style={{'float': 'right'}}>
+            Environment: <input type='text' defaultValue={'localhost:5000'} placeholder={'e.g.: localhost:5000'} id={'endpoint'}/>
+          </div>
           <hr/>
           <Grid fluid className={style['grpc-grid']}>
             <Row className={style['grpc-grid-row']}>
               <Col sm={6} className={style['grpc-grid-col']}>
+                <h2>Proto files</h2>
+                <hr/>
                 {this.props.protos && this.props.protos.map(proto => {
-                  return <div key={proto.name} className={classNames(style['grpc-grid-col-item'], style['not-selectable'])}>{proto.name}</div>
+                  return <div key={proto.name} 
+                  onClick={() => this.onProtoFileClicked(proto)} 
+                  className={classNames(style['grpc-grid-col-item'], style['text-not-selectable'], proto.isSelected && style['active'])}
+                  >
+                  {proto.name}
+                  </div>
                 })}
               </Col>
               <Col sm={6} className={style['grpc-grid-col']}>
-                <h1>Services here</h1>
+                <h2>Services</h2>
+                <hr/>
+                {this.props.services && this.props.services.map((service) => {
+                  return <div key={service.name} 
+                  onClick={() => this.onServiceClicked(service) }
+                  className={classNames(style['grpc-grid-col-item'], style['text-not-selectable'], service.isSelected && style['active'])}
+                  >
+                  {service.name}
+                  </div>
+                })}
               </Col>
             </Row>
             <Row className={style['grpc-grid-row']}>
-              <Col sm={12}>
-                <h1>Result</h1>
+              <Col sm={12} className={style['grpc-grid-col']}>
+                <h2>Fields</h2>
+                <hr/>
+                <GrpcForm 
+                  fields={this.props.fields}
+                  onFormSubmit={this.onGrpcFormSubmit}
+                />
+              </Col>
+            </Row>
+            <Row className={style['grpc-grid-row']}>
+              <Col sm={12} className={style['grpc-grid-col']}>
+                <h2>Result</h2>
+                <hr/>
+                <pre>{this.props.responseMessage}</pre>
               </Col>
             </Row>
           </Grid>
@@ -125,11 +213,7 @@ class GrpcRender extends GrpcBase {
   }
 }
 
- {/* <Form schema={schema}
-            onChange={log("changed")}
-            onSubmit={log("submitted")}
-            onError={log("errors")} />
-          } */}
+
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(GrpcRender)

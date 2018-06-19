@@ -1,0 +1,68 @@
+.titleBar{
+    font-family: 'Tajawal', sans-serif;
+    position: fixed;
+    min-width: 300px;
+    width: 100%;
+    margin: 3px;
+    top: 0;
+    height: 45px;
+    -webkit-app-region: drag;
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome and Opera */
+    font-size: 14px;
+    color: grey;
+    line-height: 40px;
+    text-align: center;
+}
+
+.controlBar{
+
+    @media screen and (max-width: 300px) {
+        min-width: 300px;
+        text-align: right;
+    }
+
+    position: fixed;
+    display: block;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    height: 20px;
+    width: auto;
+    // text-align: right;
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome and Opera */
+
+    & .controlButton{
+        position: relative;
+        display: inline-block;
+        -webkit-app-region: no-drag;
+        background: transparent;
+        min-width: 25px;
+        max-width: 25px;
+        margin: 0 6px;
+        color: #bbb;
+        border-style: none;
+        border-radius: 16px;
+        font-size: 16px;
+
+        &:hover{
+            color: #ddd;
+        }
+
+        &:active,
+        &:focus{
+            outline: none;
+        }
+    }
+}

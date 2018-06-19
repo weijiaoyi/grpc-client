@@ -7,8 +7,7 @@ import Routes from '../routes';
 
 type Props = {
   store: {},
-  history: {},
-  location: {}
+  history: {}
 };
 
 export default class Root extends Component<Props> {

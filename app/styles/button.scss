@@ -1,0 +1,26 @@
+.button {
+    width: auto;
+    min-width: 75px;
+    height: 25px;
+    border-radius: 4px;
+    border-style: none;
+    margin: $xxs 0;
+    font-size: $sm;
+    outline: none;
+
+    &.long{
+        width: 100px;
+    }
+
+    &:hover{
+        cursor: pointer;
+        background-blend-mode: darken;
+        background-color: lightgrey;
+    }
+
+    &:active{
+        background-blend-mode: darken;
+        background-color: grey;
+    }
+
+}

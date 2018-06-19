@@ -1,27 +1,33 @@
-
 $xxs: 0.4rem;
 $xs: 0.8rem;
 $s: 1.0rem;
 $sm: 1.2rem;
-$m: 1.6rem;
+$md: 1.6rem;
 $ml: 2.0rem;
 $l: 2.6rem;
 $xl: 3.2rem;
 $xxl: 3.8rem;
 
+$grpc-grid-border-color: rgba(0, 0, 0, 0.137);
+$grpc-grid-border-width: 2px;
+
+@import './button.scss';
+@import './textbox.scss';
+
 .container {
     display: block;
-    height: 100vh;
-    overflow-y: auto;
     box-sizing: border-box;
 
     &.container--main{
+        margin-top: 45px;
         padding: $sm;
         padding-left: 20rem + $sm;
+        height: calc(100vh - 45px);
+        overflow-y: auto;
     }
 }
 
-.not-selectable {
+.text-not-selectable {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -47,48 +53,63 @@ $xxl: 3.8rem;
 
 .grpc-grid{
     min-height: 50vh;
-    border: 1px solid grey;
+    border: $grpc-grid-border-width solid $grpc-grid-border-color;
     border-radius: 6px;
     padding: 0;
 }
 .grpc-grid-row{
     position: relative;
     margin: 0;
-    border-bottom: 1px solid grey;
+    border-bottom: $grpc-grid-border-width solid $grpc-grid-border-color;
 }
 .grpc-grid-row:last-child{
     border: 0;
-    min-height: 250px;
+    min-height: 150px;
 }
 .grpc-grid-col:last-child{
     border-right: none;
-    min-height: 250px;
+    min-height: 150px;
 }
 .grpc-grid-col{
-    padding: 0;
-    border-right: 1px solid black;
+    padding: $sm;
+    border-right: $grpc-grid-border-width solid $grpc-grid-border-color;
+    max-height: 400px;
+    overflow-y: auto;
 }
 .grpc-grid-col-item{
     display: block;
     box-sizing: border-box;
     width: 100%;
     height: auto;
-    border-bottom: 1px solid grey;
+    border-bottom: 1px solid rgba(128, 128, 128, 0);
     padding: $xs;
     word-wrap: break-word;
 
     &:hover{
         cursor: pointer;
+        color: white;
+        // background: lightgrey;
+    }
+
+    &.active{
         background: grey;
     }
 }
 
 .sidebar{
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome and Opera */
     position: absolute;
     overflow-y: auto;
     width: 200px;
     height: 100%;
-    background-image: linear-gradient(45deg, rgba(0, 216, 255, 0.5) 10%, rgba(0, 1, 127, 0.7));
+    background-image: linear-gradient(135deg, rgba(0, 217, 255, 0.404) 10%, rgba(162, 0, 255, 0.493) 100%);
+    font-family: 'Tajawal', sans-serif;
 
     & .nav-link{
         width: 100%;
@@ -98,10 +119,12 @@ $xxl: 3.8rem;
         color: white; //todo: use invert
 
         &.active{
-            background-blend-mode: darken;
-            background-color: darkblue;
+            background-blend-mode: lighten;
+            background-color: rgba(0, 0, 0, 0.3);
         }
     }
+}
 
-    
+.form-fieldset{
+    border: none;
 }
