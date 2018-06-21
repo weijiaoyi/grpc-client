@@ -37,7 +37,9 @@ export default class TableGrid extends Component {
 
     console.log(tracker);
     //@todo: get rows index and modify its value. this.setState
+
     
+
     this.props.onFieldChanged()
   }
 
