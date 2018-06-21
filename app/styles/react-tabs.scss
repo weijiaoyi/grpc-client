@@ -1,0 +1,33 @@
+.react-tabs{
+    
+}
+
+.react-tab-list{
+    padding: 0;
+    margin: 0;
+}
+
+.react-tab{
+    display: inline-block;
+    width: auto;
+    min-width: 75px;
+    cursor: pointer;
+    outline: 0;
+    font-size: $sm;
+    padding:$xs 0;
+    margin-right: $xxs;
+    @extend %no-text-highlight;
+
+    &:hover{
+        color: white;
+    }
+
+    &.selected{
+        border-bottom: 2px solid red;
+        font-weight: bold;
+    }
+}
+
+.react-tab-panel{
+    
+}

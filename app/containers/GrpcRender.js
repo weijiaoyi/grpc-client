@@ -9,6 +9,8 @@ import { bindActionCreators } from 'redux';
 import * as GrpcActions from '../actions/grpc';
 import { Grid, Row, Col } from 'react-flexbox-grid';
 import GrpcForm from '../components/GrpcForm';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import TableGrid from '../components/TableGrid';
 
 import style from '../styles/style.scss';
 import classNames from 'classnames'
@@ -18,6 +20,7 @@ function mapStateToProps(state) {
     protos: state.grpcReducer.protos,
     services: state.grpcReducer.services,
     fields: state.grpcReducer.fields,
+    metadata: state.grpcReducer.metadata,
     responseMessage: state.grpcReducer.responseMessage
   };
 }
@@ -165,7 +168,7 @@ class GrpcRender extends GrpcBase {
           <Grid fluid className={style['grpc-grid']}>
             <Row className={style['grpc-grid-row']}>
               <Col sm={6} className={style['grpc-grid-col']}>
-                <h2>Proto files</h2>
+                <h3>Proto files</h3>
                 <hr/>
                 {this.props.protos && this.props.protos.map(proto => {
                   return <div key={proto.name} 
@@ -177,7 +180,7 @@ class GrpcRender extends GrpcBase {
                 })}
               </Col>
               <Col sm={6} className={style['grpc-grid-col']}>
-                <h2>Services</h2>
+                <h3>Services</h3>
                 <hr/>
                 {this.props.services && this.props.services.map((service) => {
                   return <div key={service.name} 
@@ -191,17 +194,28 @@ class GrpcRender extends GrpcBase {
             </Row>
             <Row className={style['grpc-grid-row']}>
               <Col sm={12} className={style['grpc-grid-col']}>
-                <h2>Fields</h2>
-                <hr/>
-                <GrpcForm 
-                  fields={this.props.fields}
-                  onFormSubmit={this.onGrpcFormSubmit}
-                />
+                <Tabs className={style['react-tabs']}
+                  selectedTabClassName={style['selected']}
+                >
+                  <TabList className={style['react-tab-list']}>
+                    <Tab className={style['react-tab']}>Metadata</Tab>
+                    <Tab className={style['react-tab']}>Fields</Tab>
+                  </TabList>
+                  <TabPanel className={style['react-tab-panel']}>
+                    <TableGrid/>
+                  </TabPanel>
+                  <TabPanel className={style['react-tab-panel']}>
+                    <GrpcForm 
+                      fields={this.props.fields}
+                      onFormSubmit={this.onGrpcFormSubmit}
+                    />
+                  </TabPanel>
+                </Tabs>
               </Col>
             </Row>
             <Row className={style['grpc-grid-row']}>
               <Col sm={12} className={style['grpc-grid-col']}>
-                <h2>Result</h2>
+                <h3>Result</h3>
                 <hr/>
                 <pre>{this.props.responseMessage}</pre>
               </Col>

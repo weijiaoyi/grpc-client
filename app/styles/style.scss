@@ -11,8 +11,11 @@ $xxl: 3.8rem;
 $grpc-grid-border-color: rgba(0, 0, 0, 0.137);
 $grpc-grid-border-width: 2px;
 
+@import './placeholder.scss';
 @import './button.scss';
 @import './textbox.scss';
+@import './TableGrid.scss';
+@import './react-tabs.scss';
 
 .container {
     display: block;
@@ -28,12 +31,7 @@ $grpc-grid-border-width: 2px;
 }
 
 .text-not-selectable {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    @extend %no-text-highlight;
 }
 
 .items {
@@ -93,23 +91,19 @@ $grpc-grid-border-width: 2px;
 
     &.active{
         background: grey;
+        color: white;
     }
 }
 
 .sidebar{
-    -webkit-touch-callout: none; /* iOS Safari */
-      -webkit-user-select: none; /* Safari */
-       -khtml-user-select: none; /* Konqueror HTML */
-         -moz-user-select: none; /* Firefox */
-          -ms-user-select: none; /* Internet Explorer/Edge */
-              user-select: none; /* Non-prefixed version, currently
-                                    supported by Chrome and Opera */
+    @extend %no-text-highlight;
     position: absolute;
     overflow-y: auto;
     width: 200px;
     height: 100%;
     background-image: linear-gradient(135deg, rgba(0, 217, 255, 0.404) 10%, rgba(162, 0, 255, 0.493) 100%);
     font-family: 'Tajawal', sans-serif;
+    font-size: $md;
 
     & .nav-link{
         width: 100%;
