@@ -1,3 +1,8 @@
+.buttons > button{
+    display: inline-block;
+    margin-right: $xs;
+}
+
 .button {
     width: auto;
     min-width: 75px;
@@ -7,6 +12,7 @@
     margin: $xxs 0;
     font-size: $sm;
     outline: none;
+    padding: 0 $md;
 
     &.long{
         width: 100px;

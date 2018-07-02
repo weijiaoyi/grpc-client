@@ -13,6 +13,7 @@ $grpc-grid-border-width: 2px;
 
 @import './placeholder.scss';
 @import './button.scss';
+@import './list.scss';
 @import './textbox.scss';
 @import './TableGrid.scss';
 @import './react-tabs.scss';
@@ -74,33 +75,13 @@ $grpc-grid-border-width: 2px;
     max-height: 400px;
     overflow-y: auto;
 }
-.grpc-grid-col-item{
-    display: block;
-    box-sizing: border-box;
-    width: 100%;
-    height: auto;
-    border-bottom: 1px solid rgba(128, 128, 128, 0);
-    padding: $xs;
-    word-wrap: break-word;
-
-    &:hover{
-        cursor: pointer;
-        color: white;
-        // background: lightgrey;
-    }
-
-    &.active{
-        background: grey;
-        color: white;
-    }
-}
 
 .sidebar{
     @extend %no-text-highlight;
     position: absolute;
     overflow-y: auto;
     width: 200px;
-    height: 100%;
+    height: calc(100vh - 45px);
     background-image: linear-gradient(135deg, rgba(0, 217, 255, 0.404) 10%, rgba(162, 0, 255, 0.493) 100%);
     font-family: 'Tajawal', sans-serif;
     font-size: $md;

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Form from "react-jsonschema-form";
 import style from "../styles/style.scss";
 
-const mapFormTypeToProtobufType = (type) => {
+const mapProtobufTypeToFormType = (type) => {
   switch(type){
 
     case 'double':
@@ -34,7 +34,7 @@ export default (props) => {
   Object.keys(fields).map((key, index) => {
     let { fieldName, type, required, repeated, defaultValue } = fields[key];
     properties[fieldName] = {
-      type: mapFormTypeToProtobufType(type),
+      type: mapProtobufTypeToFormType(type),
       title: fieldName
     }
   });
@@ -59,15 +59,18 @@ export default (props) => {
 
   return (
     <div>
-      { props.fields.length > 0 &&
+      { props.fields.length > 0 
+      ?
       <Form 
         schema={schema}
         uiSchema={uiSchema}
         // onChange={log("changed")}
         onSubmit={props.onFormSubmit} 
       >
-        <button type="submit" className={style.button}>Submit</button>
+        <button type="submit" className={style.button}>Send Request</button>
       </Form>
+      :
+      <p>Choose a service that available from proto file to view its field.</p>
       }
     </div>
   )

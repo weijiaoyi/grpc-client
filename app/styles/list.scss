@@ -1,0 +1,33 @@
+.item{
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  border-bottom: 1px solid rgba(128, 128, 128, 0);
+  padding: $xs;
+  word-wrap: break-word;
+
+  &.clickable{
+    &:hover{
+        cursor: pointer;
+        color: white;
+    }
+
+    &.active{
+      background: grey;
+      color: white;
+    }
+  }
+
+  & > .item-cross-sign{
+    color: rgb(255, 124, 124);
+    float: right;
+    text-align: center;
+    width: 5%;
+    height: 100%;
+
+    &:hover{
+      color: red;
+    }
+  }
+}

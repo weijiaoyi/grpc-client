@@ -11,9 +11,10 @@ import { Grid, Row, Col } from 'react-flexbox-grid';
 import GrpcForm from '../components/GrpcForm';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import TableGrid from '../components/TableGrid';
+import Item from '../components/Item'
 
 import style from '../styles/style.scss';
-import classNames from 'classnames'
+import classNames from 'classnames';
 
 function mapStateToProps(state) {
   return {
@@ -52,16 +53,21 @@ class GrpcRender extends GrpcBase {
     }.bind(this))
   }
 
+  onProtoFileRemoved = (proto) => {
+    this.props.RemoveProto(proto);
+  }
+
   onProtoFileClicked = (proto) => {
-    
-    if(proto.isSelected) return;
+
+    if(proto.isSelected) {
+      this.onResetClicked();
+      return;
+    }
     
     this.props.ClearServices();
     this.props.ClearFields();
 
     let parsed = grpc.load(proto.path);
-
-    console.log(parsed);
 
     if(this.foundServiceClient(parsed)){
       parsed = { 'unknown': parsed };
@@ -76,8 +82,6 @@ class GrpcRender extends GrpcBase {
       desc.def = def.def;
       protobufs.push(desc);
     });
-
-    console.log(protobufs[0]);
     
     if(protobufs[0]){
       protobufs[0].def && Object.keys(protobufs[0].def.service).map((key) => {
@@ -92,7 +96,7 @@ class GrpcRender extends GrpcBase {
       });
     }
 
-    this.props.SelectProto(proto);
+    this.props.ToggleProto(proto);
   }
 
   syntaxHighlight = (json) => {
@@ -153,15 +157,29 @@ class GrpcRender extends GrpcBase {
   onOpenFileClick = (event) => {
     ipc.send('open-file-dialog')
   }
+
+  onResetClicked = () => {
+    this.props.ClearFields();
+    this.props.ClearServices();
+    this.props.ClearResponseMessage();
+
+    let selectedProto = this.props.protos.filter((proto) => proto.isSelected)[0];
+    if(selectedProto) this.props.ToggleProto(selectedProto);
+  }
   
   render() {
     return (
       <div>
         <div data-tid="container">
-          <button className={classNames("select-directory", style.button, style.long)} onClick={this.onOpenFileClick}>
-            Import file...
-          </button>
-          <div style={{'float': 'right'}}>
+          <div className={style['buttons']}>
+            <button className={classNames("select-directory", style.button, style.long)} onClick={this.onOpenFileClick}>
+              Import file...
+            </button>
+            <button className={classNames(style.button, style.danger)} onClick={this.onResetClicked}>
+              Reset
+            </button>
+          </div>
+          <div style={{'textAlign': 'right'}}>
             Environment: <input type='text' defaultValue={'localhost:5000'} placeholder={'e.g.: localhost:5000'} id={'endpoint'}/>
           </div>
           <hr/>
@@ -171,24 +189,31 @@ class GrpcRender extends GrpcBase {
                 <h3>Proto files</h3>
                 <hr/>
                 {this.props.protos && this.props.protos.map(proto => {
-                  return <div key={proto.name} 
-                  onClick={() => this.onProtoFileClicked(proto)} 
-                  className={classNames(style['grpc-grid-col-item'], style['text-not-selectable'], proto.isSelected && style['active'])}
+                  return (
+                  <Item
+                    key={proto.name}
+                    isActive={proto.isSelected}
+                    onClick={() => this.onProtoFileClicked(proto)}
+                    onRemove={ !proto.isSelected && (() => this.onProtoFileRemoved(proto))}
                   >
-                  {proto.name}
-                  </div>
+                    {proto.name}
+                  </Item>
+                  )
                 })}
               </Col>
               <Col sm={6} className={style['grpc-grid-col']}>
                 <h3>Services</h3>
                 <hr/>
                 {this.props.services && this.props.services.map((service) => {
-                  return <div key={service.name} 
-                  onClick={() => this.onServiceClicked(service) }
-                  className={classNames(style['grpc-grid-col-item'], style['text-not-selectable'], service.isSelected && style['active'])}
+                  return (
+                  <Item
+                    key={service.name}
+                    isActive={service.isSelected}
+                    onClick={() => this.onServiceClicked(service)}
                   >
-                  {service.name}
-                  </div>
+                    {service.name}
+                  </Item>
+                  )
                 })}
               </Col>
             </Row>
@@ -196,6 +221,7 @@ class GrpcRender extends GrpcBase {
               <Col sm={12} className={style['grpc-grid-col']}>
                 <Tabs className={style['react-tabs']}
                   selectedTabClassName={style['selected']}
+                  defaultIndex={1}
                 >
                   <TabList className={style['react-tab-list']}>
                     <Tab className={style['react-tab']}>Metadata</Tab>

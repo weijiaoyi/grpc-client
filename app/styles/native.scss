@@ -1,3 +1,5 @@
+@import './placeholder.scss';
+
 .titleBar{
     font-family: 'Tajawal', sans-serif;
     position: fixed;
@@ -7,18 +9,12 @@
     top: 0;
     height: 45px;
     -webkit-app-region: drag;
-    -webkit-touch-callout: none; /* iOS Safari */
-      -webkit-user-select: none; /* Safari */
-       -khtml-user-select: none; /* Konqueror HTML */
-         -moz-user-select: none; /* Firefox */
-          -ms-user-select: none; /* Internet Explorer/Edge */
-              user-select: none; /* Non-prefixed version, currently
-                                    supported by Chrome and Opera */
     font-size: 14px;
     font-weight: bold;
     color: grey;
     line-height: 40px;
     text-align: center;
+    @extend %no-text-highlight;
 }
 
 .controlBar{
@@ -35,14 +31,7 @@
     right: 0;
     height: 20px;
     width: auto;
-    // text-align: right;
-    -webkit-touch-callout: none; /* iOS Safari */
-      -webkit-user-select: none; /* Safari */
-       -khtml-user-select: none; /* Konqueror HTML */
-         -moz-user-select: none; /* Firefox */
-          -ms-user-select: none; /* Internet Explorer/Edge */
-              user-select: none; /* Non-prefixed version, currently
-                                    supported by Chrome and Opera */
+    @extend %no-text-highlight;
 
     & .controlButton{
         position: relative;
@@ -64,6 +53,12 @@
         &:active,
         &:focus{
             outline: none;
+        }
+
+        &.close{
+          &:hover{
+            color: rgb(255, 57, 57);;
+          }
         }
     }
 }

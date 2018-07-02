@@ -14,13 +14,13 @@ export default class App extends React.Component<Props> {
   
   render() {
 
-    const { BrowserWindow } = window.require('electron').remote;;
+    const { BrowserWindow } = window.require('electron').remote;
 
     return <div>
       <div className={style.titleBar}>
         Project Companion
         <div className={style.controlBar}>
-          <WinControl window={BrowserWindow.getFocusedWindow()}/>
+          <WinControl window={remote.getCurrentWindow()}/>
         </div>
       </div>
       <div>

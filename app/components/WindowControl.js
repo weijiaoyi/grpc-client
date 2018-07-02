@@ -13,7 +13,8 @@ export default (props) => {
   }
   
   const maximizeWindow = () => {
-    props.window.maximize();
+    if(props.window.isMaximized()) props.window.unmaximize();
+    else props.window.maximize();
   }
   
   const closeWindow = () => {
@@ -21,16 +22,16 @@ export default (props) => {
   }
 
   return (
-    <div>
-      <button className={classNames(style.controlBar, style.controlButton)} onClick={minimizeWindow}>
+    <div className={style.controlBar}>
+      <button className={style.controlButton} onClick={minimizeWindow}>
         <FontAwesomeIcon icon={faMinimize}/>
       </button>
 
-      <button className={classNames(style.controlBar, style.controlButton)} onClick={maximizeWindow}>
+      <button className={style.controlButton} onClick={maximizeWindow}>
         <FontAwesomeIcon icon={faMaximize}/>
       </button>
 
-      <button className={classNames(style.controlBar, style.controlButton)} onClick={closeWindow}>
+      <button className={classNames(style.controlButton, style.close)} onClick={closeWindow}>
         <FontAwesomeIcon icon={faClose}/>
       </button>
     </div>

@@ -1,6 +1,7 @@
 
 export const ADD_PROTO = 'ADD_PROTO';
-export const SELECT_PROTO = 'SELECT_PROTO';
+export const REMOVE_PROTO = 'REMOVE_PROTO';
+export const TOGGLE_PROTO = 'TOGGLE_PROTO';
 export const SELECT_SERVICE = 'SELECT_SERVICE';
 export const GET_STORED_PROTOS = 'GET_STORED_PROTOS';
 export const ADD_SERVICE = 'ADD_SERVICE';
@@ -32,17 +33,39 @@ export function AddProto(proto: ProtoFile) {
   };
 }
 
+export function RemoveProto(proto: ProtoFile) {
+  return {
+    type: REMOVE_PROTO,
+    payload: proto
+  };
+}
+
 export function ClearServices(){
   return {
     type: CLEAR_SERVICES
   }
 }
 
-export function SelectProto(proto: ProtoFile){
-    return {
-      type: SELECT_PROTO,
-      payload: proto
+export function ToggleProto(proto: ProtoFile){
+
+  const clearServiceIfUnselected = (dispatch) => new Promise(resolve => {
+    if(proto.isSelected){
+      dispatch({ type: CLEAR_SERVICES });
     }
+    resolve();
+  });
+
+  return (dispatch) => {
+    clearServiceIfUnselected(dispatch).then(() => {
+      dispatch({
+        type: TOGGLE_PROTO, 
+        payload: {
+          ...proto,
+          isSelected: !proto.isSelected
+        }
+      });
+    });
+  }
 }
 
 export function SelectService(serviceDef: ServiceDef) {

@@ -60,7 +60,7 @@ export default class TableGrid extends Component {
           <tbody>
             { rows.length > 0 && rows.map((row, index) => {
               return (
-              <tr>
+              <tr key={index}>
               { headers.length > 0 && headers.map(header => {
                   return <td key={rows[index][header.id]}>
                     {

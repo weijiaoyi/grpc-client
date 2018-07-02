@@ -1,4 +1,6 @@
-import { ADD_PROTO, CLEAR_RESPONSE_MESSAGE, PRINT_RESPONSE_MESSAGE, CLEAR_FIELDS, GET_STORED_PROTOS, ADD_SERVICE, SELECT_PROTO, POPULATE_FIELDS, SELECT_SERVICE, CLEAR_SERVICES } from '../actions/grpc';
+import { REMOVE_PROTO, ADD_PROTO, CLEAR_RESPONSE_MESSAGE, PRINT_RESPONSE_MESSAGE, CLEAR_FIELDS, 
+  GET_STORED_PROTOS, ADD_SERVICE, TOGGLE_PROTO, POPULATE_FIELDS, SELECT_SERVICE, CLEAR_SERVICES } 
+  from '../actions/grpc';
 
 const defaultState = {
   protos: [],
@@ -31,6 +33,13 @@ export default (state = defaultState, action) => {
           protos: [...state.protos, action.payload]
       }
 
+      case REMOVE_PROTO:
+      return {
+        ...state,
+        protos: state.protos.filter(proto => proto !== action.payload)
+      }
+      break;
+
       case GET_STORED_PROTOS:
       break;
 
@@ -40,12 +49,12 @@ export default (state = defaultState, action) => {
         services: [...state.services, action.payload]
       }
 
-      case SELECT_PROTO:
+      case TOGGLE_PROTO:
       return {
         ...state,
         protos: state.protos.map((proto) => {
           if(proto.name.indexOf(action.payload.name) > -1){
-            proto.isSelected = true;
+            proto.isSelected = action.payload.isSelected;
           }
           else proto.isSelected = false;
           return proto;
