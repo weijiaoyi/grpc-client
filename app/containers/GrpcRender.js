@@ -8,10 +8,11 @@ import grpc from 'grpc';
 import { bindActionCreators } from 'redux';
 import * as GrpcActions from '../actions/grpc';
 import { Grid, Row, Col } from 'react-flexbox-grid';
-import GrpcForm from '../components/GrpcForm';
+import GrpcForm from '../components/GrpcReduxForm';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import TableGrid from '../components/TableGrid';
 import Item from '../components/Item'
+import { reset } from 'redux-form';
 
 import style from '../styles/style.scss';
 import classNames from 'classnames';
@@ -27,7 +28,11 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(GrpcActions, dispatch);
+  return bindActionCreators(
+    {
+      ...GrpcActions,
+      reset
+    }, dispatch);
 }
 
 class GrpcRender extends GrpcBase {
@@ -39,6 +44,7 @@ class GrpcRender extends GrpcBase {
 
   registerIpcEvents = () => {
     ipc.on('selected-directory', function(event, path) {
+
       let parsed = grpc.load(path[0]);
 
       //Check if proto file has any service available.
@@ -106,7 +112,7 @@ class GrpcRender extends GrpcBase {
     return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  onGrpcFormSubmit = ({formData}) => {
+  onGrpcFormSubmit = (formData) => {
 
     this.props.ClearResponseMessage();
 
@@ -149,6 +155,10 @@ class GrpcRender extends GrpcBase {
   }
 
   onServiceClicked = (service) => {
+
+    console.log(this.props.reset);
+    this.props.reset('grpcForm');
+
     if(service.isSelected) return;
     this.props.ClearFields();
     this.props.SelectService(service);
@@ -224,7 +234,7 @@ class GrpcRender extends GrpcBase {
                   defaultIndex={1}
                 >
                   <TabList className={style['react-tab-list']}>
-                    <Tab className={style['react-tab']}>Metadata</Tab>
+                    <Tab className={style['react-tab']}>Metadata[WIP]</Tab>
                     <Tab className={style['react-tab']}>Fields</Tab>
                   </TabList>
                   <TabPanel className={style['react-tab-panel']}>

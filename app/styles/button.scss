@@ -18,10 +18,10 @@
         width: 100px;
     }
 
-    &:hover{
+    &:hover:not(:disabled){
         cursor: pointer;
         background-blend-mode: darken;
-        background-color: lightgrey;
+        background-color: #aaa;
     }
 
     &:active{

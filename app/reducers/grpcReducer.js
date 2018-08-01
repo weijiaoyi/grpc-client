@@ -53,7 +53,7 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         protos: state.protos.map((proto) => {
-          if(proto.name.indexOf(action.payload.name) > -1){
+          if(proto.name === action.payload.name){
             proto.isSelected = action.payload.isSelected;
           }
           else proto.isSelected = false;
@@ -65,7 +65,7 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         services: state.services.map((service) => {
-          if(service.name.indexOf(action.payload.name) > -1){
+          if(service.name === action.payload.name){
             service.isSelected = true;
           }
           else service.isSelected = false;

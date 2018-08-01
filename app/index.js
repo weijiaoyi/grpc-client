@@ -5,6 +5,7 @@ import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 import 'normalize.css';
 import './app.global.css';
+import Playground from './playground/Parent';
 
 const store = configureStore();
 

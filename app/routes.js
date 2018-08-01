@@ -19,6 +19,7 @@ export default (props) => (
       <Switch>
         <Route path="/" exact={true} component={Home} />
         <Route path="/grpc" exact={true} component={GrpcRender} />
+        <Route path="/converter" exact={true} component={GrpcRender} />
       </Switch>
     </div>
   </App>

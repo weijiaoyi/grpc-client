@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { AddProtoService } from "../actions/grpc";
 
-
-
 export class GrpcBase extends Component{
   
   log = (type) => {
