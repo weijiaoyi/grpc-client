@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import App from './containers/App';
 import GrpcRender from './containers/GrpcRender';
+import JsonHelper from './containers/JsonHelper';
 import Home from './containers/Home';
 import style from './styles/style.scss';
 import classNames from 'classnames'
@@ -14,12 +15,13 @@ export default (props) => (
     <div className={style.sidebar}>
       <NavLink to={"/"} activeClassName={style.active} className={style['nav-link']} exact={true}>{"Home"}</NavLink>
       <NavLink to={"/grpc"} activeClassName={style.active} className={style['nav-link']} exact={true}>{"GRPC Client"}</NavLink>
+      <NavLink to={"/jsonhelper"} activeClassName={style.active} className={style['nav-link']} exact={true}>{"JSON Helper"}</NavLink>
     </div>
     <div className={classNames(style.container, style['container--main'])}>
       <Switch>
         <Route path="/" exact={true} component={Home} />
         <Route path="/grpc" exact={true} component={GrpcRender} />
-        <Route path="/converter" exact={true} component={GrpcRender} />
+        <Route path="/jsonhelper" exact={true} component={JsonHelper} />
       </Switch>
     </div>
   </App>
