@@ -267,3 +267,5 @@ class GrpcRender extends GrpcBase {
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(GrpcRender)
+
+

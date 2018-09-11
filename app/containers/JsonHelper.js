@@ -1,4 +1,5 @@
 import React from 'react';
+import style from '../styles/style.scss';
 
 export default class JsonHelper extends React.Component{
 
@@ -23,8 +24,10 @@ export default class JsonHelper extends React.Component{
         result: JSON.stringify(this.state.inputText)
       })
     }else{
+      let parsed = JSON.parse(this.state.inputText);
+      if(typeof parsed === "object") parsed = this.state.inputText;
       this.setState({
-        result: JSON.parse(this.state.inputText).toString()
+        result: this.syntaxHighlight(parsed, this.state.toBeautify)
       })
     }
 
@@ -52,29 +55,45 @@ export default class JsonHelper extends React.Component{
   reset = (e) => {
     this.setState({
       inputText: "",
-      result: ""
+      result: "",
+      toBeautify: false
     });
   }
 
   syntaxHighlight = (json, toBeautify) => {
     try{
-      if(typeof json != 'object'){
-        json = JSON.parse(json);
+      if(toBeautify){
+        json = JSON.stringify(JSON.parse(json), undefined, 2);
+        return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       }
-      if (typeof json != 'string') {
-        json = JSON.stringify(json, undefined, 2);
-        if(!toBeautify) json = JSON.stringify(json);
+      else
+      {
+        json = JSON.stringify(JSON.parse(json));
+        return json;
       }
-      return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      // else return json.replace('&amp;',/&/g).replace('&lt;', /</g).replace('&gt;', />/g);
     }
     catch(err){
-      Console.log(err);
       return json;
     }
   }
 
   render() {
+
+    let canBeautify = !!this.state.result;
+    let parsedResult = undefined;
+
+    if(this.state.result){
+      try
+      {
+        parsedResult = JSON.parse(this.state.result);
+        canBeautify = canBeautify && !!(typeof parsedResult === "object");
+      }
+      catch(err){
+        canBeautify = false;
+      }
+    }
+
+
     return (
       <form onSubmit={this.handleSubmit}>
         <div>
@@ -99,9 +118,11 @@ export default class JsonHelper extends React.Component{
         <br/>
         <div>
           <strong style={{paddingRight: 25}}>Result</strong>
-          <button hidden={this.state.escapeToggle} disabled={!this.state.result} 
+          <button hidden={this.state.escapeToggle} 
+            disabled={!canBeautify} 
+            className={style['button']}
             onClick={this.beautifyJson}>
-            {this.state.toBeautify ? "Uglify" : "Beautify"}
+            {this.state.toBeautify ? "Serialized" : "Beautify"}
           </button>
           <hr/>
           <br/>
@@ -114,16 +135,16 @@ export default class JsonHelper extends React.Component{
               value={this.state.result}
             />
             :
-            <pre style={{width: 623, minHeight: 138, backgroundColor: '#111', margin: 0}}>
+            <pre style={{overflowY: 'auto', width: 623, minHeight: 138, backgroundColor: '#111', margin: 0}}>
               {this.state.result}
             </pre>
           }
           {/* style={{width: 623, minHeight: 138, backgroundColor: '#111', margin: 0}} */}
         </div>
         <br/>
-        <div>
-          <button type="submit">Submit</button>
-          <button onClick={this.reset}>Clear</button>
+        <div className={style['buttons']}>
+          <button className={style['button']} type="submit">Submit</button>
+          <button className={style['button']} type="button" onClick={this.reset}>Clear</button>
         </div>
       </form>
     );
