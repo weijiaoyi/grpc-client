@@ -1,12 +1,16 @@
 import { REMOVE_PROTO, ADD_PROTO, CLEAR_RESPONSE_MESSAGE, PRINT_RESPONSE_MESSAGE, CLEAR_FIELDS, 
-  GET_STORED_PROTOS, ADD_SERVICE, TOGGLE_PROTO, POPULATE_FIELDS, SELECT_SERVICE, CLEAR_SERVICES } 
+  GET_STORED_PROTOS, ADD_SERVICE, TOGGLE_PROTO, POPULATE_FIELDS, SELECT_SERVICE, CLEAR_SERVICES, UPDATE_METADATA } 
   from '../actions/grpc';
 
 const defaultState = {
   protos: [],
   services: [],
   fields: [],
-  responseMessage: ''
+  responseMessage: '',
+  metadata: [{
+    'key': 'btt',
+    'value': '1'
+  }]
 }
 
 export default (state = defaultState, action) => {
@@ -22,6 +26,12 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         fields: defaultState.fields,
+      }
+
+      case UPDATE_METADATA:
+      return {
+        ...state,
+        metadata: action.payload
       }
 
       case ADD_PROTO:

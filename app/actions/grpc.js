@@ -10,6 +10,7 @@ export const CLEAR_FIELDS = 'CLEAR_FIELDS';
 export const CLEAR_SERVICES = 'CLEAR_SERVICES';
 export const PRINT_RESPONSE_MESSAGE = 'PRINT_RESPONSE_MESSAGE';
 export const CLEAR_RESPONSE_MESSAGE = 'CLEAR_RESPONSE_MESSAGE';
+export const UPDATE_METADATA = 'UPDATE_METADATA';
 
 export interface ProtoFile{
   name: string,
@@ -26,10 +27,22 @@ export interface ServiceDef{
   serviceClient: () => {},
 }
 
+export interface MetaData{
+  key: string,
+  value: string
+}
+
 export function AddProto(proto: ProtoFile) {
   return {
     type: ADD_PROTO,
     payload: proto
+  };
+}
+
+export function UpdateMetadata(metaData: MetaData[]) {
+  return {
+    type: UPDATE_METADATA,
+    payload: metaData
   };
 }
 

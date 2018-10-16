@@ -124,7 +124,10 @@ class GrpcRender extends GrpcBase {
     // console.log(client[clientDef.name]);
 
     let metadata = new grpc.Metadata();
-    metadata.add('btt', '1');
+
+    this.props.metadata.forEach((mt: GrpcActions.MetaData) => {
+      metadata.add(mt.key, mt.value);
+    });
 
     // client[clientDef.name](7, 
     //   (value) => Buffer.from(JSON.stringify(value), 'utf8'),
@@ -154,6 +157,10 @@ class GrpcRender extends GrpcBase {
     });
   }
 
+  updateMetadata = (tableRowsData) => {
+    this.props.UpdateMetadata(tableRowsData);
+  }
+
   onServiceClicked = (service) => {
 
     console.log(this.props.reset);
@@ -178,6 +185,9 @@ class GrpcRender extends GrpcBase {
   }
   
   render() {
+
+    let {protos, services, metadata, fields, responseMessage} = this.props;
+
     return (
       <div>
         <div data-tid="container">
@@ -198,7 +208,7 @@ class GrpcRender extends GrpcBase {
               <Col sm={6} className={style['grpc-grid-col']}>
                 <h3>Proto files</h3>
                 <hr/>
-                {this.props.protos && this.props.protos.map(proto => {
+                {protos && protos.map(proto => {
                   return (
                   <Item
                     key={proto.name}
@@ -214,7 +224,7 @@ class GrpcRender extends GrpcBase {
               <Col sm={6} className={style['grpc-grid-col']}>
                 <h3>Services</h3>
                 <hr/>
-                {this.props.services && this.props.services.map((service) => {
+                {services && services.map((service) => {
                   return (
                   <Item
                     key={service.name}
@@ -238,11 +248,16 @@ class GrpcRender extends GrpcBase {
                     <Tab className={style['react-tab']}>Fields</Tab>
                   </TabList>
                   <TabPanel className={style['react-tab-panel']}>
-                    <TableGrid/>
+                    <TableGrid
+                      rows = {metadata}
+                      editable = {true}
+                      addable = {true}
+                      onEdited = {(tableData) => this.updateMetadata(tableData)}
+                    />
                   </TabPanel>
                   <TabPanel className={style['react-tab-panel']}>
                     <GrpcForm 
-                      fields={this.props.fields}
+                      fields={fields}
                       onFormSubmit={this.onGrpcFormSubmit}
                     />
                   </TabPanel>
@@ -253,7 +268,7 @@ class GrpcRender extends GrpcBase {
               <Col sm={12} className={style['grpc-grid-col']}>
                 <h3>Result</h3>
                 <hr/>
-                <pre>{this.props.responseMessage}</pre>
+                <pre>{responseMessage}</pre>
               </Col>
             </Row>
           </Grid>
