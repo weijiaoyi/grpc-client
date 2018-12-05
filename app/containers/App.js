@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
-import style from '../styles/native.scss';
+import 'normalize.css';
+import style from '../styles/style.scss';
 import { remote } from 'electron';
 
 import WinControl from '../components/WindowControl';
@@ -18,12 +19,12 @@ export default class App extends React.Component<Props> {
 
     return <div>
       <div className={style.titleBar}>
-        Project Companion
+        Dev Companion
         <div className={style.controlBar}>
           <WinControl window={remote.getCurrentWindow()}/>
         </div>
       </div>
-      <div>
+      <div className={style.app}>
         {this.props.children}
       </div>
     </div>;

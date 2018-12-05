@@ -1,0 +1,62 @@
+.titleBar{
+  font-family: 'Tajawal', sans-serif;
+  position: fixed;
+  min-width: 300px;
+  width: 100%;
+  margin: 3px;
+  top: 0;
+  height: 45px;
+  -webkit-app-region: drag;
+  font-size: 14px;
+  font-weight: bold;
+  color: grey;
+  line-height: 40px;
+  text-align: center;
+  @extend %no-text-highlight;
+}
+
+.controlBar{
+
+  @media screen and (max-width: 300px) {
+      min-width: 300px;
+      text-align: right;
+  }
+
+  position: fixed;
+  display: block;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  height: 20px;
+  width: auto;
+  @extend %no-text-highlight;
+
+  & .controlButton{
+      position: relative;
+      display: inline-block;
+      -webkit-app-region: no-drag;
+      background: transparent;
+      min-width: 25px;
+      max-width: 25px;
+      margin: 0 6px;
+      color: #bbb;
+      border-style: none;
+      border-radius: 16px;
+      font-size: 16px;
+
+      &:hover{
+          color: #ddd;
+      }
+
+      &:active,
+      &:focus{
+          outline: none;
+      }
+
+      &.close{
+        &:hover{
+          color: rgb(255, 57, 57);;
+        }
+      }
+  }
+}

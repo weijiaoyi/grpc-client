@@ -1,0 +1,29 @@
+.grpc-grid{
+  min-height: 50vh;
+  border: $grpc-grid-border-width solid $grpc-grid-border-color;
+  border-radius: 6px;
+  padding: 0;
+}
+.grpc-grid-row{
+  position: relative;
+  margin: 0;
+  border-bottom: $grpc-grid-border-width solid $grpc-grid-border-color;
+}
+.grpc-grid-row:last-child{
+  border: 0;
+  min-height: 150px;
+}
+.grpc-grid-col:last-child{
+  border-right: none;
+  min-height: 150px;
+}
+.grpc-grid-col{
+  padding: $sm;
+  border-right: $grpc-grid-border-width solid $grpc-grid-border-color;
+  // max-height: 400px;
+  overflow-y: auto;
+}
+
+pre.response-text {
+  padding-bottom: 45px;
+}

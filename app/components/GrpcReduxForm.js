@@ -29,13 +29,10 @@ const mapProtobufTypeToFieldType = (type) => {
 
 const input = ({ required, input, label, type, placeholder, meta: { touched, error, warning, validate } }) => {
   return (
-    <div>
-      <label>{label}</label>
-      <div>
-        <input {...input} type={type} placeholder={placeholder}/>
-      </div>
-      <br/>
-    </div>
+    <tr>
+      <td><label>{label}</label></td>
+      <td><input {...input} type={type} placeholder={placeholder}/></td>
+    </tr>
   )
 }
 
@@ -63,7 +60,11 @@ const GrpcForm = (props) => {
     { fields.length > 0
       ?
       <form onSubmit={handleSubmit(onFormSubmit)}>
-        {GenerateFields(fields)}
+        <table className={style.mat2}>
+          <tbody>
+            {GenerateFields(fields)}
+          </tbody>
+        </table>
         <div className={style['buttons']}>
           <button role="button" className={style.button} type="submit" disabled={pristine || submitting}>Submit</button>
           <button type="button" className={style.button} disabled={pristine || submitting} onClick={reset}>Clear Values</button>

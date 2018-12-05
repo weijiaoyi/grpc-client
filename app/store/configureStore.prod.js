@@ -11,6 +11,22 @@ const router = routerMiddleware(history);
 const enhancer = applyMiddleware(thunk, router);
 
 function configureStore(initialState?: counterStateType) {
+
+  // const persistedState = loadState();
+
+  // let store = createStore(rootReducer, initialState, enhancer, persistedState);
+
+  // // Subscribe to localStorage
+  // store.subscribe(() => {
+  //   saveState({
+  //     spinner: store.getState().spinner,
+  //     grpc: store.getState().grpcReducer,
+  //     router: store.getState().router,
+  //     form: store.getState().form
+  //   });
+  // });
+  // return store;
+
   return createStore(rootReducer, initialState, enhancer);
 }
 

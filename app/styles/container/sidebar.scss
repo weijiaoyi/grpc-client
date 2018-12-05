@@ -1,0 +1,23 @@
+.sidebar{
+  @extend %no-text-highlight;
+  position: absolute;
+  overflow-y: auto;
+  width: 200px;
+  height: calc(100vh - 45px);
+  background-image: linear-gradient(135deg, rgba(0, 217, 255, 0.404) 10%, rgba(162, 0, 255, 0.493) 100%);
+  font-family: 'Tajawal', sans-serif;
+  font-size: $md;
+
+  & .nav-link{
+      width: 100%;
+      display: block;
+      box-sizing: border-box;
+      padding: $xs;
+      color: white; //todo: use invert
+
+      &.active{
+          background-blend-mode: lighten;
+          background-color: rgba(0, 0, 0, 0.3);
+      }
+  }
+}

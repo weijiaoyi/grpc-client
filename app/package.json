@@ -1,7 +1,7 @@
 {
   "name": "project-companion-app",
   "productName": "Project Companion",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Project companion has the tools you need during your development.",
   "main": "./main.prod.js",
   "author": {

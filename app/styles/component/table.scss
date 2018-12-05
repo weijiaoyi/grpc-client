@@ -1,0 +1,35 @@
+table {
+  &.mat2{
+
+    
+    width: 100%;
+    padding: 0 $md;
+
+    @include mobile{
+      & tr {
+        & > td:first-child {
+          width: 25%;
+        }
+        & > td:last-child {
+          width: 75%;
+        }
+      }
+    }
+
+    @include desktop{
+
+      width: 768px;
+
+      & tr {
+        & > td:first-child {
+          width: 25px;
+          max-width: 25px;
+        }
+        & > td:last-child {
+          width: 100px;
+          max-width: 100px;
+        }
+      }
+    }
+  }
+}

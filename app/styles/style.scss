@@ -11,13 +11,27 @@ $xxl: 3.8rem;
 $grpc-grid-border-color: rgba(0, 0, 0, 0.137);
 $grpc-grid-border-width: 2px;
 
-@import './placeholder.scss';
-@import './button.scss';
-@import './list.scss';
-@import './textbox.scss';
-@import './TableGrid.scss';
-@import './react-tabs.scss';
-@import './charfer.scss';
+@import './function/mixin.scss';
+@import './function/placeholder.scss';
+
+@import './component/scrollbar.scss';
+@import './component/button.scss';
+@import './component/control-bar.scss';
+@import './component/form.scss';
+@import './component/list-item.scss';
+@import './component/react-tabs.scss';
+@import './component/table-grid.scss';
+@import './component/textbox';
+@import './component/table';
+
+@import './container/charfer.scss';
+@import './container/grpc.scss';
+@import './container/sidebar.scss';
+
+
+.app {
+  font-family: 'Roboto', sans-serif;
+}
 
 .container {
     display: block;
@@ -28,7 +42,7 @@ $grpc-grid-border-width: 2px;
         padding: $sm;
         padding-left: 20rem + $sm;
         height: calc(100vh - 45px);
-        overflow-y: auto;
+        overflow-y: scroll;
     }
 }
 
@@ -36,71 +50,4 @@ $grpc-grid-border-width: 2px;
     @extend %no-text-highlight;
 }
 
-.items {
-    & .item {
-        display: block;
-        width: 100%;
-        height: 20px;
-        border-bottom: 1px solid grey;
-        padding: $sm;
 
-        &:hover{
-            cursor: pointer;
-            background: grey;
-        }
-    }
-}
-
-.grpc-grid{
-    min-height: 50vh;
-    border: $grpc-grid-border-width solid $grpc-grid-border-color;
-    border-radius: 6px;
-    padding: 0;
-}
-.grpc-grid-row{
-    position: relative;
-    margin: 0;
-    border-bottom: $grpc-grid-border-width solid $grpc-grid-border-color;
-}
-.grpc-grid-row:last-child{
-    border: 0;
-    min-height: 150px;
-}
-.grpc-grid-col:last-child{
-    border-right: none;
-    min-height: 150px;
-}
-.grpc-grid-col{
-    padding: $sm;
-    border-right: $grpc-grid-border-width solid $grpc-grid-border-color;
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.sidebar{
-    @extend %no-text-highlight;
-    position: absolute;
-    overflow-y: auto;
-    width: 200px;
-    height: calc(100vh - 45px);
-    background-image: linear-gradient(135deg, rgba(0, 217, 255, 0.404) 10%, rgba(162, 0, 255, 0.493) 100%);
-    font-family: 'Tajawal', sans-serif;
-    font-size: $md;
-
-    & .nav-link{
-        width: 100%;
-        display: block;
-        box-sizing: border-box;
-        padding: $xs;
-        color: white; //todo: use invert
-
-        &.active{
-            background-blend-mode: lighten;
-            background-color: rgba(0, 0, 0, 0.3);
-        }
-    }
-}
-
-.form-fieldset{
-    border: none;
-}

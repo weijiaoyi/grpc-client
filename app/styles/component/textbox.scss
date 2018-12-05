@@ -1,0 +1,25 @@
+input {
+
+  box-sizing: border-box;
+  background: rgb(190, 190, 190);
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: $xs $xs;
+  transition: background linear .2s;
+  margin: 0 $sm;
+
+  &:focus,
+  &:hover{
+    background: rgb(250, 250, 250);
+  }
+
+  &.long{
+    max-width: 350px;
+    width: 100%;
+  }
+
+  &.full-width{
+    width: 100%;
+  }
+  
+}

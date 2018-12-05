@@ -1,0 +1,121 @@
+$mobile-width: 480px;
+$tablet-width: 768px;
+$desktop-width: 1024px;
+
+/* Screen size */
+@mixin mobile {
+    @media (min-width: 0) and (max-width: #{$tablet-width - 1px}) {
+      @content;
+    }
+  }
+
+@mixin tablet {
+  @media (min-width: 0) and (max-width: #{$desktop-width - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$desktop-width}) {
+    @content;
+  }
+}
+
+@mixin float-left{
+  float: left;;
+}
+
+@mixin float-right{
+  float: right;;
+}
+
+@mixin no-outline{
+  outline: none !important;
+}
+
+@mixin no-text-decoration{
+  text-decoration: none;
+}
+
+@mixin no-animation{
+  animation: none;
+}
+
+@mixin transition($args...) {
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -ms-transition: $args;
+  -o-transition: $args;
+  transition: $args;
+}
+
+@mixin transform($args...) {
+  -webkit-transform: $args;
+  -moz-transform: $args;
+  -ms-transform: $args;
+  -o-transform: $args;
+  transform: $args;
+}
+
+@mixin animation($str...) {
+  -webkit-animation: #{$str};
+  -moz-animation: #{$str};
+  -ms-animation: #{$str};
+  -o-animation: #{$str};
+  animation: #{$str};      
+}
+
+@mixin background-linear-gradient($direction, $color-stops...) {
+  // Direction has been omitted and happens to be a color-stop
+  @if is-direction($direction) == false {
+    $color-stops: $direction, $color-stops;
+    $direction: 180deg;
+  }
+  background: linear-gradient($direction, $color-stops);
+  background: -moz-linear-gradient($direction, $color-stops);
+  background: -o-linear-gradient($direction, $color-stops);
+  background: -ms-linear-gradient($direction, $color-stops);
+  background: -webkit-linear-gradient(legacy-direction($direction), $color-stops);
+}
+
+@mixin background($background: null){
+  @if is-not-null($background){
+    -webkit-background: $background;
+    -moz-background: $background;
+    -o-background: $background;
+    background: $background;
+  }
+}
+
+@mixin align-placeholder($side){
+  &::-webkit-input-placeholder {
+    text-align: $side;
+  }
+  &:-moz-placeholder {
+    text-align: $side;
+  }  
+  &::-moz-placeholder {
+    text-align: $side;
+  }
+  &:-ms-input-placeholder {
+    text-align: $side;
+  }  
+}
+
+@mixin keyframes($animation-name) {
+  @-webkit-keyframes #{$animation-name} {
+      @content;
+  }
+  @-moz-keyframes #{$animation-name} {
+      @content;
+  }  
+  @-ms-keyframes #{$animation-name} {
+      @content;
+  }
+  @-o-keyframes #{$animation-name} {
+      @content;
+  }  
+  @keyframes #{$animation-name} {
+      @content;
+  }
+}

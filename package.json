@@ -28,7 +28,8 @@
     "test": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js",
     "test-all": "npm run lint && npm run flow && npm run build && npm run test && npm run test-e2e",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
-    "test-watch": "npm test -- --watch"
+    "test-watch": "npm test -- --watch",
+    "start-prod": "cross-env NODE_ENV=production electron ./app/main.prod.js"
   },
   "browserslist": "electron 1.6",
   "lint-staged": {
@@ -39,7 +40,7 @@
     ]
   },
   "build": {
-    "productName": "Project Companion",
+    "productName": "Dev Companion",
     "appId": "org.project.companion",
     "files": [
       "dist/",
@@ -204,6 +205,7 @@
     "electron-debug": "^1.5.0",
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",
+    "node-gyp": "^3.8.0",
     "normalize.css": "^8.0.0",
     "protobufjs": "^6.8.6",
     "react": "^16.4.0",

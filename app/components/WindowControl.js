@@ -1,5 +1,5 @@
 import React from 'react';
-import style from '../styles/native.scss';
+import style from '../styles/style.scss';
 import classNames from 'classnames';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import faMinimize from '@fortawesome/fontawesome-free-solid/faWindowMinimize'

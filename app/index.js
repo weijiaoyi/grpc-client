@@ -3,9 +3,7 @@ import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
-import 'normalize.css';
 import './app.global.css';
-import Playground from './playground/Parent';
 
 const store = configureStore();
 

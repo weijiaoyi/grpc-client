@@ -1,0 +1,51 @@
+$tableGrid-border: 1px solid rgba(0, 0, 0, 0.5);
+$colors: red, orange, yellow, green, blue, purple;
+$hm-color-odd-1: red;
+$hm-color-odd-2: orange;
+$hm-color-even-1: blue;
+$hm-color-even-2: purple;
+$hm-steps: 32;
+
+.tableGrid {
+    width: 100%;
+    height: 100%;
+    border: $tableGrid-border;
+    
+    &.equal-width{
+        table-layout:fixed;
+    }
+}
+
+.tableGrid thead > tr > th{
+    border-bottom: $tableGrid-border;
+    padding: 6px;
+}
+
+.tableGrid tbody > tr > td{
+    border-bottom: $tableGrid-border;
+    padding: 6px;   
+}
+
+.tableGrid tbody > tr {
+  &:last-child > td {
+    border-bottom: none;
+  }
+}
+
+@for $i from 0 through $hm-steps {
+  .tableGrid tbody > tr > td.hm-#{$i} {
+
+    @if $i % 2 == 0 {
+      background-color: mix($hm-color-even-1, $hm-color-even-2, percentage($i / ($hm-steps)));
+    } @else {
+      background-color: mix($hm-color-odd-1, $hm-color-odd-2, percentage($i / ($hm-steps)));
+    }
+
+    cursor: default;
+    height: $xxl;
+    text-align: center;
+    font-size: $xl;
+    @extend %no-text-highlight;
+    
+  }
+}

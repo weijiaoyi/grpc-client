@@ -27,8 +27,12 @@ export interface ServiceDef{
   serviceClient: () => {},
 }
 
-export interface MetaData{
-  key: string,
+export interface MetaDataProp {
+  value: string
+}
+
+export interface MetaData {
+  key: MetaDataProp,
   value: string
 }
 

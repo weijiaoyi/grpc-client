@@ -2,16 +2,26 @@ import { REMOVE_PROTO, ADD_PROTO, CLEAR_RESPONSE_MESSAGE, PRINT_RESPONSE_MESSAGE
   GET_STORED_PROTOS, ADD_SERVICE, TOGGLE_PROTO, POPULATE_FIELDS, SELECT_SERVICE, CLEAR_SERVICES, UPDATE_METADATA } 
   from '../actions/grpc';
 
+import { loadState } from '../localStorage';
+
 const defaultState = {
   protos: [],
   services: [],
   fields: [],
   responseMessage: '',
   metadata: [{
-    'key': 'btt',
-    'value': '1'
+    'key': { value: 'btt' },
+    'value': { value: '3' }
   }]
 }
+
+// const defaultState = {
+//   ...loadState().grpc,
+//   metadata: [{
+//     'key': { value: 'btt' },
+//     'value': { value: '3' }
+//   }]
+// }
 
 export default (state = defaultState, action) => {
   switch(action.type){

@@ -6,6 +6,18 @@ import faPlusCircle from '@fortawesome/fontawesome-free-solid/faPlusCircle';
 
 export default class TableGrid extends Component {
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ 
+      rows: nextProps.rows,
+      headers: Object.getOwnPropertyNames(nextProps.rows[0]).map(propName => {
+        return {
+          id: propName,
+          name: propName
+        }
+      }),
+    });  
+  }
+
   state = {
     rows: this.props.rows,
     headers: Object.getOwnPropertyNames(this.props.rows[0]).map(propName => {
@@ -27,7 +39,7 @@ export default class TableGrid extends Component {
     this.setState({
       rows: newRowsData
     });
-    this.props.onFieldChanged()
+    this.props.onFieldChanged(newRowsData)
   }
 
   getRowData = (index) => {
@@ -55,7 +67,7 @@ export default class TableGrid extends Component {
 
     return (
       <div>
-        <table className={classNames(style.table, style['equal-width'])}>
+        <table className={classNames(style.tableGrid, style['equal-width'])}>
           <thead className={style.table}>
             <tr>
             { headers.length > 0 && headers.map((header, index) => {
@@ -68,14 +80,17 @@ export default class TableGrid extends Component {
               return (
               <tr key={index}>
               { headers.length > 0 && headers.map(header => {
-                return <td key={[header.id]}>
+
+                let { value, className } = row[header.id];
+
+                return <td key={[header.id]} className={className}>
                   {
                     !editable
                     ?
-                    rows[index][header.id]
+                    value
                     :
                     <input
-                      defaultValue={rows[index][header.id]}
+                      defaultValue={value}
                       onBlur={(e) => this.updateRowData(index, [header.id], e.target.value)}
                     />
                   }

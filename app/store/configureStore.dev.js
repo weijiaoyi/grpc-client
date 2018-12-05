@@ -5,6 +5,8 @@ import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 
+import { loadState, saveState } from '../localStorage';
+
 const history = createHashHistory();
 
 const configureStore = (initialState) => {
@@ -48,8 +50,19 @@ const configureStore = (initialState) => {
   enhancers.push(applyMiddleware(...middleware));
   const enhancer = composeEnhancers(...enhancers);
 
+  const persistedState = loadState();
   // Create Store
-  const store = createStore(rootReducer, initialState, enhancer);
+  const store = createStore(rootReducer, initialState, enhancer, persistedState);
+
+  // Subscribe to localStorage
+  store.subscribe(() => {
+    saveState({
+      spinner: store.getState().spinner,
+      grpc: store.getState().grpcReducer,
+      router: store.getState().router,
+      form: store.getState().form
+    });
+  });
 
   if (module.hot) {
     module.hot.accept(

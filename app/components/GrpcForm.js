@@ -6,8 +6,18 @@ const CustomFieldTemplate = (props) => {
   const {id, type, classNames, label, help, required, description, errors, children} = props;
   return (
     <div className={classNames}>
-      <label htmlFor={id}>{label}{required ? "*" : null}</label>
-      <input type={type} required={!!required}/>
+      <table className={style.mat2}>
+        <tbody>
+          <tr>
+            <td>
+              <label htmlFor={id}>{label}{required ? "*" : null}</label>
+            </td>
+            <td>
+              <input type={type} required={!!required} className={style['full-width']}/>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }

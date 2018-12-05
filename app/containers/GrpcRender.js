@@ -11,11 +11,12 @@ import { Grid, Row, Col } from 'react-flexbox-grid';
 import GrpcForm from '../components/GrpcReduxForm';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import TableGrid from '../components/TableGrid';
-import Item from '../components/Item'
+import Item from '../components/ListItem'
 import { reset } from 'redux-form';
 
 import style from '../styles/style.scss';
 import classNames from 'classnames';
+import { syntaxHighlight } from '../helpers/formatter'; 
 
 function mapStateToProps(state) {
   return {
@@ -105,13 +106,6 @@ class GrpcRender extends GrpcBase {
     this.props.ToggleProto(proto);
   }
 
-  syntaxHighlight = (json) => {
-    if (typeof json != 'string') {
-      json = JSON.stringify(json, undefined, 2);
-    }
-    return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
-
   onGrpcFormSubmit = (formData) => {
 
     this.props.ClearResponseMessage();
@@ -126,7 +120,7 @@ class GrpcRender extends GrpcBase {
     let metadata = new grpc.Metadata();
 
     this.props.metadata.forEach((mt: GrpcActions.MetaData) => {
-      metadata.add(mt.key, mt.value);
+      metadata.add(mt.key.value, mt.value.value);
     });
 
     // client[clientDef.name](7, 
@@ -153,7 +147,7 @@ class GrpcRender extends GrpcBase {
     // );
 
     client[clientDef.name](formData, metadata: metadata, (err, resp) => {
-      this.props.PrintMessage(this.syntaxHighlight(resp || err));
+      this.props.PrintMessage(syntaxHighlight(resp || err));
     });
   }
 
@@ -190,7 +184,7 @@ class GrpcRender extends GrpcBase {
 
     return (
       <div>
-        <div data-tid="container">
+        <div>
           <div className={style['buttons']}>
             <button className={classNames("select-directory", style.button, style.long)} onClick={this.onOpenFileClick}>
               Import file...
@@ -200,14 +194,24 @@ class GrpcRender extends GrpcBase {
             </button>
           </div>
           <div style={{'textAlign': 'right'}}>
-            Environment: <input type='text' defaultValue={'localhost:5000'} placeholder={'e.g.: localhost:5000'} id={'endpoint'}/>
+            <table className={style.mat2} style={{marginLeft: 'auto'}}>
+              <tbody>
+                <tr>
+                  <td>
+                  <strong>Environment</strong>
+                  </td>
+                  <td>
+                    <input type='text' className={style['full-width']} defaultValue={'localhost:5000'} placeholder={'e.g.: localhost:5000'} id={'endpoint'}/>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
           <hr/>
           <Grid fluid className={style['grpc-grid']}>
             <Row className={style['grpc-grid-row']}>
               <Col sm={6} className={style['grpc-grid-col']}>
                 <h3>Proto files</h3>
-                <hr/>
                 {protos && protos.map(proto => {
                   return (
                   <Item
@@ -223,7 +227,6 @@ class GrpcRender extends GrpcBase {
               </Col>
               <Col sm={6} className={style['grpc-grid-col']}>
                 <h3>Services</h3>
-                <hr/>
                 {services && services.map((service) => {
                   return (
                   <Item
@@ -250,8 +253,8 @@ class GrpcRender extends GrpcBase {
                   <TabPanel className={style['react-tab-panel']}>
                     <TableGrid
                       rows = {metadata}
-                      editable = {true}
-                      addable = {true}
+                      editable = {false}
+                      addable = {false}
                       onEdited = {(tableData) => this.updateMetadata(tableData)}
                     />
                   </TabPanel>
@@ -268,7 +271,7 @@ class GrpcRender extends GrpcBase {
               <Col sm={12} className={style['grpc-grid-col']}>
                 <h3>Result</h3>
                 <hr/>
-                <pre>{responseMessage}</pre>
+                <pre className={style["response-text"]}>{responseMessage}</pre>
               </Col>
             </Row>
           </Grid>
