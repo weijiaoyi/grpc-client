@@ -11,7 +11,7 @@ const defaultState = {
   responseMessage: '',
   metadata: [{
     'key': { value: 'btt' },
-    'value': { value: '3' }
+    'value': { value: '1' }
   }]
 }
 

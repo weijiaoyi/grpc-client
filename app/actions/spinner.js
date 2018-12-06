@@ -43,10 +43,10 @@ export function Spin(
       let nst = String(nextSpinType).charAt(0);
 
       if (!nextSpinId || !sessionToken) 
-        throw new Error("Spin: Next Spin Id or Session token is required to spin.");
+        throw new Error("Spin: Session token and/or Next Spin Id is required to spin.");
 
       if (nst != '1') 
-        throw new Error(`Spin: This spinner tool currently support spin type = 1 only where the next spin type is ${nst}.`);
+        throw new Error(`Spin: This spinner tool currently only support spin type = 1 where the next spin type is ${nst}.`);
 
       const config = {
         headers: {
@@ -65,6 +65,8 @@ export function Spin(
     
       let result = await axios.post(`${url}/spin`, jsonToUrlEncoded(body), config);
       
+      if (result.data.err) throw new Error(`Spin: Spin request return error: ${syntaxHighlight(result.data)}`)
+
       let betResult: BetResult = {
         nextSpinType: result.data.dt.si.nst,
         nextSpinId: result.data.dt.si.sid,
@@ -82,6 +84,7 @@ export function Spin(
     }catch(err) {
       console.error(`${err.message}`);
       await dispatch(ShowBetResult(`${err.message}`));
+      await dispatch(ResetBetResult());
     }
   }
 }

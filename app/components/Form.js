@@ -2,27 +2,34 @@ import React from 'react';
 import { reset, Field, reduxForm } from 'redux-form';
 import style from "../styles/style.scss";
 
-const input = ({ required, input, label, type, placeholder, meta: { touched, error, warning, validate } }) => {
+const input = ({ step, disabled, defaultValue, readOnly, required, input, label, type, placeholder, meta: { touched, error, warning, validate } }) => {
+  
   return (
     <tr>
       <td><label>{label}</label></td>
-      <td><input {...input} type={type} placeholder={placeholder}/></td>
+      {/* <td><input {...input}/></td> */}
+      <td><input {...input} type={type} step={step} value={undefined} defaultValue={defaultValue} placeholder={placeholder} readOnly={readOnly} disabled={disabled}/></td>
     </tr>
   )
 }
 
 const GenerateFields = (fields) => {
   return Object.keys(fields).map((field, index) => {
-    let { key, fieldName, type, required, defaultValue } = fields[field];
+    let { key, fieldName, type, required, defaultValue, readOnly, placeholder, step } = fields[field];
     return (
     <Field 
-      key={key}
-      // parse={mapProtobufTypeToFieldType(type) === 'number' && ((val) => isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+    // parse={mapProtobufTypeToFieldType(type) === 'number' && ((val) => isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
       component={input}
+      key={key}
       label={fieldName}
       name={key}
       required={!!required}
       type={type}
+      readOnly={readOnly}
+      placeholder={placeholder}
+      defaultValue={defaultValue}
+      disabled={readOnly}
+      step={step}
     />
     )
   });
@@ -61,6 +68,17 @@ const Form = (props) => {
   )
 }
 
+// function mapStateToProps(state, props) {
+//   return {
+//     initialValues: props.fields.reduce((p, c) => {
+//       p[c.key] = c.defaultValue;
+//       return p;
+//     }, {})
+//   }
+// }
+
 export default reduxForm({
-  form: 'form'
+  keepDirtyOnReinitialize: true,
+  enableReinitialize: true,
+  updateUnregisteredFields: true
 })(Form)

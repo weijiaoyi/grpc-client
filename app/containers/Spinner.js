@@ -37,9 +37,11 @@ class Spinner extends Component {
 
     this.props.ToggleIsSpinning(true);
 
+    this.props.ShowBetResult('');
+
     let betResult = this.props.betResult;
 
-    if (!betResult.nextSpinId) {
+    if (!betResult.nextSpinId || betResult.nextSpinType != 1) {
       betResult = await this.props.GetAndUpdateGameInfo(
         document.getElementById('endpoint').value,
         formData,
@@ -101,26 +103,32 @@ class Spinner extends Component {
 
     let { isSpinning, betResultString } = this.props;
     let { width, height } = this.props.reel;
-    let { reel } = this.props.betResult;
+    let { reel, nextSpinType, nextSpinId } = this.props.betResult;
     
     let betSettingFormFields = [
       {
         key: 'cs',
         fieldName: 'Coin size',
         type: 'number',
-        required: true
+        required: true,
+        defaultValue: 0.1,
+        step: 0.01,
       },
       {
         key: 'ml',
         fieldName: 'Multiplier',
         type: 'number',
-        required: true
+        required: true,
+        defaultValue: 1,
+        step: 1,
       },
       {
         key: 'mxl',
         fieldName: 'Lines Bet',
         type: 'number',
-        required: true
+        required: true,
+        defaultValue: 30,
+        step: 1,
       }
     ]
      
@@ -131,7 +139,6 @@ class Spinner extends Component {
         type="submit">
         { isSpinning ? "SPINNING..." : "SPIN"}</button>
     )
-
     return (
       <div>
         <div data-tid="container">
@@ -163,20 +170,12 @@ class Spinner extends Component {
           <table className={style.mat2}>
             <tbody>
               <tr>
-                <td>
-                  Width
-                </td>
-                <td>
-                  <input type='number' min="1" defaultValue={width} onChange={this.onWidthChanged}/>
-                </td>
+                <td>Width</td>
+                <td><input type='number' min="1" defaultValue={width} onChange={this.onWidthChanged}/></td>
               </tr>
               <tr>
-                <td>
-                  Height
-                </td>
-                <td>
-                  <input type='number' min="1" defaultValue={height} onChange={this.onHeightChanged}/>
-                </td>
+                <td>Height</td>
+                <td><input type='number' min="1" defaultValue={height} onChange={this.onHeightChanged}/></td>
               </tr>
             </tbody>
           </table>
@@ -189,9 +188,30 @@ class Spinner extends Component {
           <br/>
           <h3>Bet Settings</h3>
           <hr/>
-          <Form 
+          <table className={style.mat2}>
+            <tbody>
+              <tr>
+                <td>Next Spin Id</td>
+                <td><input disabled={true} readOnly={true} value={this.props.betResult.nextSpinId || "-"}/></td>
+              </tr>
+              <tr>
+                <td>Next Spin Type</td>
+                <td><input disabled={true} readOnly={true} value={this.props.betResult.nextSpinType || "-"}/></td>
+              </tr>
+            </tbody>
+          </table>
+          <Form
+            form="SpinnerForm"
             fields={betSettingFormFields}
+            initialValues=
+            {
+              betSettingFormFields.reduce((p, c) => {
+                p[c.key] = c.defaultValue;
+                return p;
+              }, {})
+            }
             onFormSubmit={this.onFormSubmit}
+            onChange={this.props.ResetBetResult}
             submitScheme={submitScheme}
           />
 
