@@ -79,12 +79,8 @@ export default merge.smart(baseConfig, {
         }
       },
       {
-        test: /\.global\.css$/,
-        loader: 'style-loader!css-loader',
-        include: /flexboxgrid/
-      },
-      {
-        test: /\.global\.css$/,
+        test: /^((?!\.global).)*\.(sa|sc|c)ss$/,
+        include: [/node_modules/, /styles\/vendor/],
         use: [
           {
             loader: 'style-loader'
@@ -94,11 +90,15 @@ export default merge.smart(baseConfig, {
             options: {
               sourceMap: true
             }
+          },
+          {
+            loader: 'sass-loader'
           }
         ]
       },
       {
-        test: /^((?!\.global).)*\.css$/,
+        test: /(sc|c)ss$/,
+        exclude: [/node_modules/, /styles\/vendor/],
         use: [
           {
             loader: 'style-loader'
@@ -111,48 +111,51 @@ export default merge.smart(baseConfig, {
               importLoaders: 1,
               localIdentName: '[name]__[local]__[hash:base64:5]'
             }
-          }
+          },
+          {
+            loader: 'sass-loader'
+          },
         ]
       },
       // SASS support - compile all .global.scss files and pipe it to style.css
-      {
-        test: /\.global\.(scss|sass)$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'sass-loader'
-          }
-        ]
-      },
-      // SASS support - compile all other .scss files and pipe it to style.css
-      {
-        test: /^((?!\.global).)*\.(scss|sass)$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              sourceMap: true,
-              importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]'
-            }
-          },
-          {
-            loader: 'sass-loader'
-          }
-        ]
-      },
+      // {
+      //   test: /\.global\.(scss|sass)$/,
+      //   use: [
+      //     {
+      //       loader: 'style-loader'
+      //     },
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         sourceMap: true
+      //       }
+      //     },
+      //     {
+      //       loader: 'sass-loader'
+      //     }
+      //   ]
+      // },
+      // // SASS support - compile all other .scss files and pipe it to style.css
+      // {
+      //   test: /^((?!\.global).)*\.(scss|sass)$/,
+      //   use: [
+      //     {
+      //       loader: 'style-loader'
+      //     },
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         modules: true,
+      //         sourceMap: true,
+      //         importLoaders: 1,
+      //         localIdentName: '[name]__[local]__[hash:base64:5]'
+      //       }
+      //     },
+      //     {
+      //       loader: 'sass-loader'
+      //     }
+      //   ]
+      // },
       // WOFF Font
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
@@ -252,7 +255,7 @@ export default merge.smart(baseConfig, {
 
   node: {
     __dirname: false,
-    __filename: false
+    __filename: false,
   },
 
   devServer: {

@@ -108,47 +108,56 @@ class GrpcRender extends GrpcBase {
 
   onGrpcFormSubmit = (formData) => {
 
-    this.props.ClearResponseMessage();
+    try
+    {
+ 
+      this.props.ClearResponseMessage();
 
-    let endpointAddress = document.getElementById('endpoint').value;
-    let clientDef = this.props.services.filter((service) => service.isSelected)[0];
-    let client = new clientDef.serviceClient(endpointAddress, grpc.credentials.createInsecure());
+      let endpointAddress = document.getElementById('endpoint').value;
+      let clientDef = this.props.services.filter((service) => service.isSelected)[0];
+      let client = new clientDef.serviceClient(endpointAddress, grpc.credentials.createInsecure());
 
-    // console.log(clientDef);
-    // console.log(client[clientDef.name]);
+      // console.log(clientDef);
+      // console.log(client[clientDef.name]);
 
-    let metadata = new grpc.Metadata();
+      let metadata = new grpc.Metadata();
 
-    this.props.metadata.forEach((mt: GrpcActions.MetaData) => {
-      metadata.add(mt.key.value, mt.value.value);
-    });
+      this.props.metadata.forEach((mt: GrpcActions.MetaData) => {
+        metadata.add(mt.key.value, mt.value.value);
+      });
 
-    // client[clientDef.name](7, 
-    //   (value) => Buffer.from(JSON.stringify(value), 'utf8'),
-    //   (data) => JSON.parse(data),
-    //   formData,
-    //   metadata,
-    //   {}, (err, resp) => {
-    //     this.props.PrintMessage(this.syntaxHighlight(resp || err));
-    //   }
-    // );
+      console.log(metadata);
 
-    // client.makeUnaryRequest(clientDef.path, 
-    //   (value) => Buffer.from(JSON.stringify(value), 'utf8'),
-    //   (data) => JSON.parse(data),
-    //   formData,
-    //   metadata,
-    //   {}, (err, resp) => {
-    //     this.props.PrintMessage(this.syntaxHighlight(resp || err));
-    //     // document.getElementById('responseTextArea').innerHTML = this.syntaxHighlight(resp || err);
-    //     // console.log('Response: ', resp);
-    //     // console.log('Error: ', err);
-    //   }
-    // );
+      // client[clientDef.name](7, 
+      //   (value) => Buffer.from(JSON.stringify(value), 'utf8'),
+      //   (data) => JSON.parse(data),
+      //   formData,
+      //   metadata,
+      //   {}, (err, resp) => {
+      //     this.props.PrintMessage(this.syntaxHighlight(resp || err));
+      //   }
+      // );
 
-    client[clientDef.name](formData, metadata: metadata, (err, resp) => {
-      this.props.PrintMessage(syntaxHighlight(resp || err));
-    });
+      // client.makeUnaryRequest(clientDef.path, 
+      //   (value) => Buffer.from(JSON.stringify(value), 'utf8'),
+      //   (data) => JSON.parse(data),
+      //   formData,
+      //   metadata,
+      //   {}, (err, resp) => {
+      //     this.props.PrintMessage(this.syntaxHighlight(resp || err));
+      //     // document.getElementById('responseTextArea').innerHTML = this.syntaxHighlight(resp || err);
+      //     // console.log('Response: ', resp);
+      //     // console.log('Error: ', err);
+      //   }
+      // );
+
+      client[clientDef.name](formData, metadata: metadata, (err, resp) => {
+        this.props.PrintMessage(syntaxHighlight(resp || err));
+      });
+
+    }catch(err) {
+      console.error(`Error occurred while submitting request:${err}`);
+    }
   }
 
   updateMetadata = (tableRowsData) => {
@@ -247,15 +256,15 @@ class GrpcRender extends GrpcBase {
                   defaultIndex={1}
                 >
                   <TabList className={style['react-tab-list']}>
-                    <Tab className={style['react-tab']}>Metadata[WIP]</Tab>
+                    <Tab className={style['react-tab']}>Metadata</Tab>
                     <Tab className={style['react-tab']}>Fields</Tab>
                   </TabList>
                   <TabPanel className={style['react-tab-panel']}>
                     <TableGrid
                       rows = {metadata}
-                      editable = {false}
+                      editable = {true}
                       addable = {false}
-                      onEdited = {(tableData) => this.updateMetadata(tableData)}
+                      onFieldChanged = {(tableData) => this.updateMetadata(tableData)}
                     />
                   </TabPanel>
                   <TabPanel className={style['react-tab-panel']}>

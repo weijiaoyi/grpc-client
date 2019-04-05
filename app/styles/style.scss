@@ -23,10 +23,16 @@ $grpc-grid-border-width: 2px;
 @import './component/table-grid.scss';
 @import './component/textbox';
 @import './component/table';
+@import './component/checkbox';
+@import './component/layout';
+@import './component/card';
 
 @import './container/charfer.scss';
 @import './container/grpc.scss';
 @import './container/sidebar.scss';
+
+@import './vendor/codemirror';
+@import "~font-awesome/css/font-awesome.css";
 
 
 .app {

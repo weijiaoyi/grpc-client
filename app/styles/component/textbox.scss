@@ -6,7 +6,11 @@ input {
   border-radius: 6px;
   padding: $xs $xs;
   transition: background linear .2s;
-  margin: 0 $sm;
+  // margin: 0 $sm;
+
+  &.short {
+    padding: 0 $xs;
+  }
 
   &:focus,
   &:hover{

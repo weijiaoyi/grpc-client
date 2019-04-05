@@ -91,7 +91,7 @@ export default class TableGrid extends Component {
                     :
                     <input
                       defaultValue={value}
-                      onBlur={(e) => this.updateRowData(index, [header.id], e.target.value)}
+                      onBlur={(e) => this.updateRowData(index, [header.id], { value: e.target.value })}
                     />
                   }
                 </td>

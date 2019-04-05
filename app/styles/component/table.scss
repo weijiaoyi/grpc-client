@@ -1,9 +1,12 @@
 table {
   &.mat2{
 
-    
     width: 100%;
     padding: 0 $md;
+
+    & td {
+      padding: $xxs $sm;
+    }
 
     @include mobile{
       & tr {
@@ -18,7 +21,7 @@ table {
 
     @include desktop{
 
-      width: 768px;
+      max-width: 768px;
 
       & tr {
         & > td:first-child {

@@ -11,7 +11,10 @@ export const GET_UPDATE_GAMEINFO = "GET_UPDATE_GAMEINFO";
 export const TOGGLE_IS_SPINNING = "TOGGLE_IS_SPINNING";
 export const SHOW_BETRESULT = "SHOW_BETRESULT";
 export const SET_BETRESULT = "SET_BETRESULT";
+export const SET_BETSETTING = "SET_BETSETTING";
 export const RESET_BETRESULT = "RESET_BETRESULT";
+export const TOGGLE_AUTOSPIN = "TOGGLE_AUTOSPIN";
+export const SET_AUTOSPINSETTINGS = "SET_AUTOSPINSETTINGS";
 
 export function ChangeWidth(width: number) {
   return {
@@ -33,7 +36,7 @@ export function Spin(
   nextSpinId: number,
   nextSpinType: number,
   sessionToken: string,
-  platForm: number = 99
+  bypassFeatureSpin: boolean = false
   ) : number 
   {
 
@@ -42,11 +45,12 @@ export function Spin(
     {
       let nst = String(nextSpinType).charAt(0);
 
-      if (!nextSpinId || !sessionToken) 
-        throw new Error("Spin: Session token and/or Next Spin Id is required to spin.");
+      if (!sessionToken)
+        throw new Error("Spin: Session token is required to spin.");
 
-      if (nst != '1') 
-        throw new Error(`Spin: This spinner tool currently only support spin type = 1 where the next spin type is ${nst}.`);
+      if (nst != '1' && !bypassFeatureSpin) 
+        throw new Error(`Spin: This spinner tool currently only support spin type = 1 where the next spin type is ${nst}.
+        \nIf you insist to spin with spin type = 1 settings, please tick 'Allow feature spin anyway' checkbox.`);
 
       const config = {
         headers: {
@@ -58,12 +62,12 @@ export function Spin(
         ...betSetting,
         id: nextSpinId,
         atk: sessionToken,
-        pf: platForm,
         btt: 1,
         wk: "0_C"
       }
-    
-      let result = await axios.post(`${url}/spin`, jsonToUrlEncoded(body), config);
+
+      let testModeId = betSetting.testModeId;
+      let result = await axios.post(`${url}${(testModeId) ? `/qa/spin?tm=${testModeId}` : '/spin'}`, jsonToUrlEncoded(body), config);
       
       if (result.data.err) throw new Error(`Spin: Spin request return error: ${syntaxHighlight(result.data)}`)
 
@@ -86,6 +90,27 @@ export function Spin(
       await dispatch(ShowBetResult(`${err.message}`));
       await dispatch(ResetBetResult());
     }
+  }
+}
+
+export function ToggleAutoSpin(enable: boolean) {
+  return {
+    type: TOGGLE_AUTOSPIN,
+    payload: enable
+  }
+}
+
+export function SetAutoSpinSettings(autoSpinSetting: Object) {
+  return {
+    type: SET_AUTOSPINSETTINGS,
+    payload: autoSpinSetting
+  }
+}
+
+export function SetBetSettings(betSetting: Object) {
+  return {
+    type: SET_BETSETTING,
+    payload: betSetting
   }
 }
 
@@ -138,23 +163,27 @@ export function GetAndUpdateGameInfo(
         wk: wallet,
         btt: 1,
         atk: sessionToken,
+        pf: betSetting.pf
       }
 
       let getInfoBody = {
         btt: body.btt,
-        atk: body.atk
+        atk: body.atk,
+        pf: body.pf
       }
 
       let updateWalletBody = {
         btt: body.btt,
         atk: body.atk,
-        wk: body.wk
+        wk: body.wk,
+        pf: body.pf
       }
 
       let updateBetBody = {
         btt: body.btt,
         atk: body.atk,
-        cs: body.cs
+        cs: body.cs,
+        pf: body.pf
       }
 
       let result = await axios.post(`${url}/GameInfo/Get`, jsonToUrlEncoded(getInfoBody), config);

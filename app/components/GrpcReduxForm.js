@@ -5,19 +5,21 @@ import style from "../styles/style.scss";
 const mapProtobufTypeToFieldType = (type) => {
   switch(type){
 
-    case 'double':
-    case 'float':
     case 'int32':
     case 'int64':
     case 'uint32':
     case 'uint64':
     case 'sint32':
     case 'sint64':
+    return 'number';
+
+    case 'double':
+    case 'float':
     case 'fixed32':
     case 'fixed64':
     case 'sfixed32':
     case 'sfixed64':
-    return 'number';
+    return 'float';
 
     case 'bool':
     return 'checkbox';
@@ -28,10 +30,17 @@ const mapProtobufTypeToFieldType = (type) => {
 }
 
 const input = ({ required, input, label, type, placeholder, meta: { touched, error, warning, validate } }) => {
+
+  let step = undefined;
+  if (type == 'float') {
+    step = 0.01;
+    type = 'number';
+  }
+
   return (
     <tr>
       <td><label>{label}</label></td>
-      <td><input {...input} type={type} placeholder={placeholder}/></td>
+      <td><input {...input} type={type} step={step} placeholder={placeholder}/></td>
     </tr>
   )
 }
@@ -39,10 +48,20 @@ const input = ({ required, input, label, type, placeholder, meta: { touched, err
 const GenerateFields = (fields) => {
   return Object.keys(fields).map((key, index) => {
     let { fieldName, type, required, repeated, defaultValue } = fields[key];
+
+    let parser = (type) => {
+      if (mapProtobufTypeToFieldType(type) === 'number') {
+        return ((val) => isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))
+      }
+      else if (mapProtobufTypeToFieldType(type) === 'float') {
+        return ((val) => isNaN(parseFloat(val)) ? null : parseFloat(val))
+      }
+    }
+
     return (
     <Field 
       key={fieldName}
-      parse={mapProtobufTypeToFieldType(type) === 'number' && ((val) => isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+      parse={parser(type)}
       component={input}
       label={fieldName}
       name={fieldName}

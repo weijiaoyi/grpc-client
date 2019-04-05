@@ -7,7 +7,6 @@ const input = ({ step, disabled, defaultValue, readOnly, required, input, label,
   return (
     <tr>
       <td><label>{label}</label></td>
-      {/* <td><input {...input}/></td> */}
       <td><input {...input} type={type} step={step} value={undefined} defaultValue={defaultValue} placeholder={placeholder} readOnly={readOnly} disabled={disabled}/></td>
     </tr>
   )

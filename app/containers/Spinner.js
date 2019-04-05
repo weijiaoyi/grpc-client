@@ -15,25 +15,16 @@ function mapDispatchToProps(dispatch) {
 }
 
 function mapStateToProps(state) {
-  let { reel, nextSpinId, currentSpinId, isSpinning, betSettings, betResultString, betResult } = state.spinner;
   return {
-    reel,
-    nextSpinId,
-    currentSpinId,
-    isSpinning,
-    betSettings,
-    betResult,
-    betResultString
+    ...state.spinner
   };
 }
 
 class Spinner extends Component {
 
-  componentWillMount = () => {
+  spinnerForm = React.createRef();
 
-  }
-
-  onFormSubmit = async (formData: Object) => {
+  onFormSubmit = async (formData) => {
 
     this.props.ToggleIsSpinning(true);
 
@@ -41,24 +32,35 @@ class Spinner extends Component {
 
     let betResult = this.props.betResult;
 
-    if (!betResult.nextSpinId || betResult.nextSpinType != 1) {
+    const { bypassFeatureSpin, ...bodyData } = formData;
+
+    if (!betResult.nextSpinId || (betResult.nextSpinType != 1 && !bypassFeatureSpin)) {
       betResult = await this.props.GetAndUpdateGameInfo(
         document.getElementById('endpoint').value,
-        formData,
+        bodyData,
         "0_C",
-        document.getElementById('sessionToken').value, 99
+        document.getElementById('sessionToken').value
       )
     }
 
-    if (betResult.nextSpinId) {
+    if (betResult.nextSpinId != undefined || betResult.nextSpinId != null) {
       await this.props.Spin(
         document.getElementById('endpoint').value, 
-        formData,
+        bodyData,
         this.props.betResult.nextSpinId || betResult.nextSpinId,
         this.props.betResult.nextSpinType || betResult.nextSpinType,
-        document.getElementById('sessionToken').value, 99);
+        document.getElementById('sessionToken').value, bypassFeatureSpin);
       }
     this.props.ToggleIsSpinning(false);
+  }
+
+  onAutoSpinFormSubmit = async () => {
+
+    const { autoSpinSetting } = this.props;
+    const { interval } = autoSpinSetting;
+
+    let autoSpin = setInterval(await this.onFormSubmit, interval);
+    clearInterval(autoSpin);
   }
 
   onHeightChanged = (e) => {
@@ -69,7 +71,8 @@ class Spinner extends Component {
     this.props.ChangeWidth(e.target.value);
   }
 
-  resetBetResult = (e) => {
+  onFormFieldChange = (formData: Object) => {
+    
     this.props.ResetBetResult();
   }
 
@@ -101,7 +104,7 @@ class Spinner extends Component {
 
   render() {
 
-    let { isSpinning, betResultString } = this.props;
+    let { isSpinning, betResultString, isOnAutoSpin, betSettings } = this.props;
     let { width, height } = this.props.reel;
     let { reel, nextSpinType, nextSpinId } = this.props.betResult;
     
@@ -111,7 +114,7 @@ class Spinner extends Component {
         fieldName: 'Coin size',
         type: 'number',
         required: true,
-        defaultValue: 0.1,
+        defaultValue: betSettings.cs,
         step: 0.01,
       },
       {
@@ -119,7 +122,7 @@ class Spinner extends Component {
         fieldName: 'Multiplier',
         type: 'number',
         required: true,
-        defaultValue: 1,
+        defaultValue: betSettings.ml,
         step: 1,
       },
       {
@@ -127,18 +130,61 @@ class Spinner extends Component {
         fieldName: 'Lines Bet',
         type: 'number',
         required: true,
-        defaultValue: 30,
+        defaultValue: betSettings.mxl,
         step: 1,
+      },
+      {
+        key: 'pf',
+        fieldName: 'Platform',
+        type: 'number',
+        required: true,
+        defaultValue: 99,
+        step: 1,
+      },
+      {
+        key: 'bypassFeatureSpin',
+        fieldName: 'Allow feature spin anyway',
+        type: 'checkbox',
+        required: false
+      },
+      {
+        key: 'testModeId',
+        fieldName: 'QA Test Mode Id (Leave blank for normal spin)',
+        type: 'number',
+        required: false,
+        step: 1,
+      },
+      {
+        key: 'autoSpin',
+        fieldName: 'Enable Auto Spin',
+        type: 'checkbox',
+        required: false
+      },
+      {
+        key: 'autoSpinInterval',
+        fieldName: 'Auto Spin Interval (Milliseconds)',
+        type: 'number',
+        required: false,
+        defaultValue: 1000,
+        step: 1000,
       }
     ]
      
     let submitScheme = (
       <button role="button" 
         disabled={isSpinning} 
-        className={classNames(style.button, style.big)} 
+        className={classNames(style.button, style.big, (isSpinning ? '' : style.rainbow))} 
         type="submit">
         { isSpinning ? "SPINNING..." : "SPIN"}</button>
     )
+
+    let autoSubmitScheme = (
+      <button role="button" 
+        className={classNames(style.button, style.big, (isSpinning ? '' : style.rainbow))}
+        type="submit">
+        { isOnAutoSpin ? "Stop" : "Start"}</button>
+    )
+
     return (
       <div>
         <div data-tid="container">
@@ -211,17 +257,9 @@ class Spinner extends Component {
               }, {})
             }
             onFormSubmit={this.onFormSubmit}
-            onChange={this.props.ResetBetResult}
+            onChange={this.onFormFieldChange}
             submitScheme={submitScheme}
           />
-
-            {/* <button
-              className={style.button} 
-              style={{width: '100%', height: '50px'}}
-              onClick={this.Spin}
-              disabled={isSpinning}>
-                SPIN
-            </button> */}
         </div>
         <br/>
         <br/>

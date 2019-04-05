@@ -1,0 +1,12 @@
+.card {
+
+  padding: $sm $ml;
+  width: auto;
+  background-color: #333;
+  border-radius: $sm;
+  margin: $sm 0;
+
+  &.card--block {
+    width: 100%;
+  }
+}

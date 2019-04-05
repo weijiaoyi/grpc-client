@@ -1,5 +1,6 @@
 import { SPIN, CHANGED_WIDTH, CHANGED_HEIGHT, TOGGLE_IS_SPINNING, 
-  SHOW_BETRESULT, SET_BETRESULT, RESET_BETRESULT } from '../actions/spinner';
+  SHOW_BETRESULT, SET_BETRESULT, SET_BETSETTING, RESET_BETRESULT,
+  TOGGLE_AUTOSPIN, SET_AUTOSPINSETTINGS } from '../actions/spinner';
 import { loadState } from '../localStorage';
 
 export interface SpinnerState {
@@ -8,11 +9,21 @@ export interface SpinnerState {
     height: number,
     current: Array
   },
-  betSettings: Object,
+  formData: {
+    cs: number,
+    ml: number,
+    mxl: number,
+    pf: number,
+    bypassFeatureSpin: boolean
+  },
   nextSpinId ?: number,
   currentSpinId ?: number,
   isSpinning: boolean,
-  betResult: BetResult
+  betResult: BetResult,
+  isOnAutoSpin: boolean,
+  autoSpinSetting: {
+    interval: number
+  }
 }
 
 export interface BetResult {
@@ -27,7 +38,11 @@ const defaultState: SpinnerState = {
     height: 3,
     current: []
   },
-  betSettings: {},
+  betSettings: {
+    cs: 0.1,
+    ml: 1,
+    mxl: 30
+  },
   nextSpinId: null,
   currentSpinId: null,
   isSpinning: false,
@@ -77,6 +92,27 @@ export default (state = defaultState, action) => {
     state = {
       ...state,
       isSpinning: action.payload
+    }
+    break;
+
+    case TOGGLE_AUTOSPIN:
+    state = {
+      ...state,
+      isOnAutoSpin: action.payload
+    }
+    break;
+
+    case SET_AUTOSPINSETTINGS:
+    state = {
+      ...state,
+      autoSpinSetting: action.payload
+    }
+    break;
+
+    case SET_BETSETTING:
+    state = {
+      ...state,
+      betSettings: action.payload
     }
     break;
 
