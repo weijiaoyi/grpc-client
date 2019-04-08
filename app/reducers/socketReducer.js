@@ -1,22 +1,30 @@
 import { Actions } from '../actions/socket';
 
-export type ISocketConnectionState = 'idle' | 'connecting' | 'connected' | 'connect_error' | 'connect_timed_out' | 'disconnected';
+export type ISocketConnectionState = '-' | 'connecting' | 'connected' | 'connect_error' | 'connect_timed_out' | 'disconnected';
 
-export interface ISocketEmitter {
+export interface ISocket {
   [id: string]: {
-    eventName : string,
     endpointUrl: string,
-    servicePath: string,
-    request: any,
-    requestedDetail: any,
-    isOnAutoEmit: boolean,
-    autoEmitIntervalMs: number,
-    isEmitting: boolean,
-    currentState: ISocketConnectionState
+    socket: SocketIOClient.Socket,
+    emitters: IEmitter,
+    listeners: IListener,
+    currentState: ISocketConnectionState,
   }
 }
 
-export interface ISocketListener {
+export interface IEmitter {
+  [id: string]: {
+    eventName : string,
+    request: any,
+    requestedDetail: any,
+    emitIntervalRef: any,
+    isOnAutoEmit: boolean,
+    autoEmitIntervalMs: number,
+    isEmitting: boolean,
+  }
+}
+
+export interface IListener {
   [id: string]: {
     eventName : string,
     response: object,
@@ -25,70 +33,101 @@ export interface ISocketListener {
 }
 
 export interface ISocketState {
-  socketEmitters: ISocketEmitter,
-  socketListeners: ISocketListener,
-  currentTabIndex: number
+  sockets: ISocket,
+  currentTabIndex: number,
 }
 
 const initialState: ISocketState = {
-  socketEmitters: {},
-  socketListeners: {},
-  currentTabIndex: 0
+  sockets: {},
+  currentTabIndex: 0,
+  isSocketConnected: false
 }
 
 export default (state: ISocketState = initialState, { type, payload }) => {
   switch (type) {
 
-    case Actions.ON_ADD_EMITTER:
+    case Actions.TOGGLE_SOCKET_CONNECTED:
       return {
         ...state,
-        socketEmitters: {...state.socketEmitters, ...{
+        isSocketConnected: payload.isSocketConnected
+      }
+
+    case Actions.ON_ADD_SOCKET:
+      return {
+        ...state,
+        sockets: {...state.sockets, ...{
           [payload.id]: payload.value
         }}
       }
 
-    case Actions.ON_REMOVE_EMITTER: {
-      let { [payload]: rmItem, ...rest } = state.socketEmitters;
-      return {
-        ...state,
-        socketEmitters: rest
-      }
-    }
-
-    case Actions.ON_UPDATE_EMITTER:
+    case Actions.ON_UPDATE_SOCKET:
       state = {
         ...state,
-        socketEmitters: {
-          ...state.socketEmitters,
+        sockets: {
+          ...state.sockets,
           [payload.id]: payload.value
         }
       }
       return state;
 
-    case Actions.ON_ADD_LISTENER:
+    case Actions.ON_REMOVE_SOCKET: {
+      let { [payload]: rmItem, ...rest } = state.sockets;
       return {
         ...state,
-        socketListeners: {...state.socketListeners, payload}
-      }
-
-    case Actions.ON_REMOVE_LISTENER: {
-      let { [payload]: rmItem, ...rest } = state;
-      return {
-        ...state,
-        socketListeners: rest
+        sockets: rest
       }
     }
 
-    case Actions.ON_UPDATE_LISTENER:
-      state.socketListeners[payload.eventName] = payload.value;
+    case Actions.ON_ADD_EMITTER:
+      state = {
+        ...state,
+        sockets: {
+          ...state.sockets,
+          [payload.id]: {
+            ...state.sockets[payload.id],
+            emitters: {
+              ...state.sockets[payload.id].emitters, ...{
+                [payload.emitterId]: payload.value
+              }
+            }
+          }
+        }
+      }
       return state;
 
+    case Actions.ON_UPDATE_EMITTER:
+    state = {
+      ...state,
+      sockets: {
+        ...state.sockets, 
+        [payload.id]: {
+          ...state.sockets[payload.id],
+          emitters: {
+            ...state.sockets[payload.id].emitters, ...{
+              [payload.emitterId]: payload.value
+            }
+          }
+        }
+      }
+    }
+    return state;
+
+    case Actions.ON_REMOVE_EMITTER: {
+      let { [payload.emitterId]: rmItem, ...rest } = state.sockets[payload.id];
+      return {
+        ...state,
+        sockets: {
+          ...state.sockets,
+          rest
+        }
+      }
+    }
+
     case Actions.ON_TAB_SWITCHED:
-      state = {
+      return state = {
         ...state,
         currentTabIndex: payload
       }
-      return state;
 
     default:
       return state;
