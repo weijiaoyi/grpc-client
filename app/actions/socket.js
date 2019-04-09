@@ -16,6 +16,7 @@ export const Actions = {
   ON_ADD_LISTENER: 'ON_ADD_LISTENER',
   ON_REMOVE_LISTENER: 'ON_REMOVE_LISTENER',
   ON_UPDATE_LISTENER: 'ON_UPDATE_LISTENER',
+  ON_UPDATE_MODAL: 'ON_UPDATE_MODAL',
   ON_TAB_SWITCHED: 'ON_TAB_SWITCHED',
   ON_ENDPOINT_CHANGED: 'ON_ENDPOINT_CHANGED',
   ON_SERVICE_PATH_CHANGED: 'ON_SERVICE_PATH_CHANGED',
@@ -45,8 +46,9 @@ const getInitialEmitter = () => {
 const getInitialSocketListener = () => {
   return {
     eventName: undefined,
-    isListening: true,
+    isListening: false,
     response: undefined,
+    responseList: []
   }
 }
 
@@ -108,32 +110,44 @@ export function onRemoveEmitter(id: string, emitterId: string) {
 }
 
 
-export function onAddListener() {
+export function onAddListener(id: string) {
   
   return {
     type: Actions.ON_ADD_LISTENER,
     payload: {
-      id: getUniqueInitialListenerKey(),
+      id,
+      listenerId: getUniqueIdKey(),
       value: getInitialSocketListener()
     }
   };
 }
 
-export function onRemoveListener(id: string) {
-  return {
-    type: Actions.ON_REMOVE_LISTENER,
-    payload: id
-  };
-}
-
-export function onUpdateListener(id: string, value: ISocketListener) {
+export function onUpdateListener(id: string, listenerId: string, value: ISocketListener) {
   return {
     type: Actions.ON_UPDATE_LISTENER,
     payload: {
       id,
+      listenerId,
       value
     }
   };
+}
+
+export function onRemoveListener(id: string, listenerId: string) {
+  return {
+    type: Actions.ON_REMOVE_LISTENER,
+    payload: {
+      id,
+      listenerId
+    }
+  };
+}
+
+export function onUpdateModal(modal: IModal) {
+  return {
+    type: Actions.ON_UPDATE_MODAL,
+    payload: modal
+  }
 }
 
 export function onTabSwitch(index: string) {

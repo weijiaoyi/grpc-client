@@ -2,6 +2,12 @@ import { Actions } from '../actions/socket';
 
 export type ISocketConnectionState = '-' | 'connecting' | 'connected' | 'connect_error' | 'connect_timed_out' | 'disconnected';
 
+export interface IModal {
+  header: string,
+  body: any,
+  isOpened: boolean
+}
+
 export interface ISocket {
   [id: string]: {
     endpointUrl: string,
@@ -28,6 +34,7 @@ export interface IListener {
   [id: string]: {
     eventName : string,
     response: object,
+    responseList: object[],
     isListening: boolean,
   }
 }
@@ -35,12 +42,17 @@ export interface IListener {
 export interface ISocketState {
   sockets: ISocket,
   currentTabIndex: number,
+  modal: IModal
 }
 
 const initialState: ISocketState = {
   sockets: {},
   currentTabIndex: 0,
-  isSocketConnected: false
+  modal: {
+    header: undefined,
+    body: undefined,
+    isOpened: false
+  }
 }
 
 export default (state: ISocketState = initialState, { type, payload }) => {
@@ -64,8 +76,9 @@ export default (state: ISocketState = initialState, { type, payload }) => {
       state = {
         ...state,
         sockets: {
-          ...state.sockets,
-          [payload.id]: payload.value
+          ...state.sockets, ...{
+            [payload.id]: payload.value
+          }
         }
       }
       return state;
@@ -113,12 +126,73 @@ export default (state: ISocketState = initialState, { type, payload }) => {
     return state;
 
     case Actions.ON_REMOVE_EMITTER: {
-      let { [payload.emitterId]: rmItem, ...rest } = state.sockets[payload.id];
+      let { [payload.emitterId]: rmItem, ...rest } = state.sockets[payload.id].emitters;
       return {
         ...state,
         sockets: {
           ...state.sockets,
-          rest
+          [payload.id]: {
+            ...state.sockets[payload.id],
+            emitters: rest
+          }
+        }
+      }
+    }
+
+    case Actions.ON_ADD_LISTENER:
+      state = {
+        ...state,
+        sockets: {
+          ...state.sockets,
+          [payload.id]: {
+            ...state.sockets[payload.id],
+            listeners: {
+              ...state.sockets[payload.id].listeners, ...{
+                [payload.listenerId]: payload.value
+              }
+            }
+          }
+        }
+      }
+      return state;
+
+    case Actions.ON_UPDATE_LISTENER:
+    state = {
+      ...state,
+      sockets: {
+        ...state.sockets, 
+        [payload.id]: {
+          ...state.sockets[payload.id],
+          listeners: {
+            ...state.sockets[payload.id].listeners, ...{
+              [payload.listenerId]: payload.value
+            }
+          }
+        }
+      }
+    }
+    return state;
+
+    case Actions.ON_REMOVE_LISTENER: {
+      let { [payload.listenerId]: rmItem, ...rest } = state.sockets[payload.id].listeners;
+      return {
+        ...state,
+        sockets: {
+          ...state.sockets,
+          [payload.id]: {
+            ...state.sockets[payload.id],
+            listeners: rest
+          }
+        }
+      }
+    }
+
+    case Actions.ON_UPDATE_MODAL: {
+      return {
+        ...state,
+        modal: {
+          ...state.modal,
+          ...{payload}
         }
       }
     }

@@ -1,6 +1,10 @@
 table {
   &.mat2{
 
+    & tr {
+      height: 50px;
+    }
+
     width: 100%;
     padding: 0 $md;
 
