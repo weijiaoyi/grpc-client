@@ -78,9 +78,9 @@ class Socket extends PureComponent<ISocketState & typeof SocketActions> {
     let thisSocket = sockets[id];
     let thisListener = thisSocket.listeners[listenerId];
     
-    modal.header = `Showing latest ${this.sizeToSplice} listener records for event: ${thisListener.eventName}.`
+    modal.header = `Showing ${this.sizeToSplice} newest records for event: ${thisListener.eventName}.`
     
-    modal.body = thisListener.responseList.reverse().map((responseData, i) => {
+    modal.body = thisListener.responseList.slice().reverse().map((responseData, i) => {
       return (
         <div key={i}>
           <pre style={{
@@ -406,7 +406,7 @@ class Socket extends PureComponent<ISocketState & typeof SocketActions> {
                   </tr>
                   <tr>
                     <td>
-                      <strong>Connection state</strong>
+                      <strong>Connection Status</strong>
                     </td>
                     <td>
                     <button 
@@ -633,7 +633,7 @@ class Socket extends PureComponent<ISocketState & typeof SocketActions> {
           style={this.modalStyles}
         >
           <h2>{modal.header}</h2>
-          <div style={{overflowY: 'scroll', height: '80%'}}>{modal.body}</div>
+          <div style={{overflowY: 'scroll', height: 'calc(100% - 80px)'}}>{modal.body}</div>
         </Modal>
       </div>
     )

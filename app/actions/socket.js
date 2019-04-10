@@ -25,7 +25,7 @@ export const Actions = {
 const getUniqueIdKey = () => Date.now().toString();
 const getInitialSocket = () => {
   return {
-    endpointUrl: 'https://api.dev.pgsoft.tech/smartbot',
+    endpointUrl: 'https://api.dev.pgsoft.tech/',
     socket: undefined,
     emitters: {},
     listeners: {},

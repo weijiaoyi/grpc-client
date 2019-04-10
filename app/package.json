@@ -1,7 +1,7 @@
 {
   "name": "dev-companion-app",
   "productName": "Dev Companion",
-  "version": "1.1.4-devtool",
+  "version": "1.1.5-devtool",
   "description": "Dev companion has the tools you need during your development.",
   "main": "./main.prod.js",
   "author": {
