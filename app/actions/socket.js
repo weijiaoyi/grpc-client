@@ -25,7 +25,8 @@ export const Actions = {
 const getUniqueIdKey = () => Date.now().toString();
 const getInitialSocket = () => {
   return {
-    endpointUrl: 'https://api.dev.pgsoft.tech/',
+    endpointUrl: 'https://api.dev.pgsoft.tech',
+    path: 'socket/message-hub/socket.io',
     socket: undefined,
     emitters: {},
     listeners: {},

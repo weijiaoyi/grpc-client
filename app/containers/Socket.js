@@ -33,6 +33,15 @@ function getSocketStateColor(state: ISocketConnectionState): string {
   }
 }
 
+const getDefaultSocketOpts = (path: string) => {
+  return {
+    path: `/${path}`,
+    reconnection: false,
+    // reconnectionDelay: 1000,
+    // reconnectionAttempts: 10
+  }
+}
+
 class Socket extends PureComponent<ISocketState & typeof SocketActions> {
 
   componentDidMount() {
@@ -118,7 +127,7 @@ class Socket extends PureComponent<ISocketState & typeof SocketActions> {
     thisSocket[property] = value || 0;
     this.props.onUpdateSocket(id, thisSocket);
   }
-
+  
   onEmitterPropertyChanged(id: string, emitterId: string, property: string, value: any) {
     const { sockets } = this.props;
     let thisSocket = sockets[id];
@@ -135,48 +144,31 @@ class Socket extends PureComponent<ISocketState & typeof SocketActions> {
     this.props.onUpdateListener(id, listenerId, thisListener);
   }
 
-  connectSocket = (id) => {
+  initSocket = (id) => {
     const { sockets } = this.props;
     let thisSocket = sockets[id];
-    let io : SocketIOClient.Socket;
+
+    let io = ioConnect(thisSocket.endpointUrl, getDefaultSocketOpts(thisSocket.path));
+    
     // Register preserved event that reactable to our state.
-    if (!thisSocket.socket) {
-      io = ioConnect(thisSocket.endpointUrl, { 
-        path: '/socket/message-hub/socket.io',
-        reconnection: true,
-        reconnectionDelay: 1000,
-        reconnectionAttempts: 10
+    io.on('connect', () => {
+      this.onSocketPropertyChanged(id, 'currentState', 'connected');
+      Object.keys(thisSocket.listeners).forEach(listenerId => {
+        this.toggleListener(id, listenerId, true);
       });
-      
-      io.on('connect', () => {
-        this.onSocketPropertyChanged(id, 'currentState', 'connected');
-        Object.keys(thisSocket.listeners).forEach(listenerId => {
-          this.toggleListener(id, listenerId, true);
-        });
-      });
-  
-      io.on('disconnect', (reason) => {
-        this.disconnectSocket(id);
-      });
-  
-      io.on('connect_error', (error) => {
-        this.onSocketPropertyChanged(id, 'currentState', 'connect_error');
-      });
-  
-      io.on('connect_timeout', (timeout) => {
-        this.onSocketPropertyChanged(id, 'currentState', 'connect_timeout');
-      });
-    }
-    else
-    {
-      io = thisSocket.socket;
-      io.connect(thisSocket.endpointUrl, { 
-        path: '/socket/message-hub/socket.io',
-        reconnection: true,
-        reconnectionDelay: 1000,
-        reconnectionAttempts: 10
-      });
-    }
+    });
+
+    io.on('disconnect', (reason) => {
+      this.disconnectSocket(id);
+    });
+
+    io.on('connect_error', (error) => {
+      this.onSocketPropertyChanged(id, 'currentState', 'connect_error');
+    });
+
+    io.on('connect_timeout', (timeout) => {
+      this.onSocketPropertyChanged(id, 'currentState', 'connect_timeout');
+    });
 
     // Register listening listener on initial.
     Object.keys(thisSocket.listeners).forEach((listenerId) => {
@@ -185,6 +177,15 @@ class Socket extends PureComponent<ISocketState & typeof SocketActions> {
     });
 
     this.onSocketPropertyChanged(id, 'socket', io);
+  }
+
+  connectSocket = (id) => {
+    const { sockets } = this.props;
+    let thisSocket = sockets[id];
+    let io : SocketIOClient.Socket;
+    
+    this.initSocket(id);
+
     this.onSocketPropertyChanged(id, 'currentState', 'connecting');
   }
 
@@ -213,8 +214,8 @@ class Socket extends PureComponent<ISocketState & typeof SocketActions> {
     });
 
     socket && socket.close();
+    this.onRemoveSocket(id);
 
-    this.onSocketPropertyChanged(id, 'socket', socket);
     this.onSocketPropertyChanged(id, 'currentState', 'disconnected');
   }
 
@@ -323,6 +324,17 @@ class Socket extends PureComponent<ISocketState & typeof SocketActions> {
     }
   }
 
+  stopAutoEmit = (id: string, emitterId: string) => {
+    const { sockets } = this.props;
+    let thisSocket = sockets[id];
+    let thisEmitter = thisSocket.emitters[emitterId];
+
+    clearInterval(thisEmitter.emitIntervalRef);
+
+    this.onEmitterPropertyChanged(id, emitterId, 'emitIntervalRef', null);
+    this.onEmitterPropertyChanged(id, emitterId, 'isOnAutoEmit', false);
+  }
+
   onRemoveListener = (id: string, listenerId: string) => {
     const { sockets, onRemoveListener } = this.props;
     let thisSocket = sockets[id];
@@ -397,11 +409,20 @@ class Socket extends PureComponent<ISocketState & typeof SocketActions> {
                 <tbody>
                   <tr>
                     <td>
-                      <strong>Endpoint</strong>
+                      <strong>Url</strong>
                     </td>
                     <td>
                       <input type='text' onChange={(e) => this.onSocketPropertyChanged(id, 'endpointUrl', e.target.value)} defaultValue={thisSocket.endpointUrl} className={classNames(style['full-width'], style['short'])}/>
                       <br/><small>Required</small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Path</strong>
+                    </td>
+                    <td>
+                      <input type='text' onChange={(e) => this.onSocketPropertyChanged(id, 'path', e.target.value)} defaultValue={thisSocket.path} className={classNames(style['full-width'], style['short'])}/>
+                      <br/><small>Namespace or path to connect server's socket (without leading slash)</small>
                     </td>
                   </tr>
                   <tr>
@@ -460,7 +481,7 @@ class Socket extends PureComponent<ISocketState & typeof SocketActions> {
                               className={classNames(style['short'])}
                               placeholder={'Emit once'} 
                               onChange={(e) => this.onEmitterPropertyChanged(id, emitterId, 'autoEmitIntervalMs', parseInt(e.target.value || 0))} defaultValue={thisEmitter.autoEmitIntervalMs}/> ms
-                              <br/><small>Optional, leave blank to emit once at a time.</small>
+                              <br/><small>Optional, leave blank to emit once.</small>
                             </td>
                           </tr>
                         </tbody>
@@ -499,7 +520,7 @@ class Socket extends PureComponent<ISocketState & typeof SocketActions> {
                           <button
                             disabled={!isConnected}
                             title={(!isConnected) ? 'Socket is not connected yet. Please click \'connect\' in configure section.' : undefined}
-                            onClick={(e) => (thisEmitter.isOnAutoEmit) ? this.removeAutoEmit(id, emitterId) : this.onEmitEvent(id, emitterId) } 
+                            onClick={(e) => (thisEmitter.isOnAutoEmit) ? this.stopAutoEmit(id, emitterId) : this.onEmitEvent(id, emitterId) } 
                             className={classNames(style['button'], style['button-block'])}>
                             {(thisEmitter.isOnAutoEmit)
                             ?

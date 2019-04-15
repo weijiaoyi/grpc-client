@@ -11,6 +11,7 @@ export interface IModal {
 export interface ISocket {
   [id: string]: {
     endpointUrl: string,
+    path: string,
     socket: SocketIOClient.Socket,
     emitters: IEmitter,
     listeners: IListener,
